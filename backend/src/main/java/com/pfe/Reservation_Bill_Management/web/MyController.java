@@ -4,16 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+=======
+>>>>>>> db9f408 (Latest Changes)
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+<<<<<<< HEAD
 import org.springframework.web.client.RestTemplate;
+=======
+>>>>>>> db9f408 (Latest Changes)
 
 import com.pfe.Reservation_Bill_Management.entities.User;
 import com.pfe.Reservation_Bill_Management.services.user.RegisterService;
@@ -63,6 +69,7 @@ public class MyController {
     }
     
     @PostMapping("/register")
+<<<<<<< HEAD
     public ResponseEntity<Map<String, String>> register(@RequestBody Map<String, String> credentials) {
         Map<String, String> response = new HashMap<>();
         
@@ -126,4 +133,15 @@ public class MyController {
 
     
  
+=======
+    public ResponseEntity<Map<String, String>> register(User user) {
+        Map<String, String> response = new HashMap<>();
+        userServiceRegister.addUser(user);
+        response.put("message", "You're in the main page");
+        return ResponseEntity.ok(response);
+    }
+    
+    
+}
+>>>>>>> db9f408 (Latest Changes)
 

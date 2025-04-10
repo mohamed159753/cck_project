@@ -13,6 +13,7 @@ public class RegisterService {
 	@Autowired
 	UserDAO userdao;
 	
+<<<<<<< HEAD
 	public boolean registerUser(String username, String email, String password) {
 		if(userdao.findByEmail(email) == null) {
 			User user = new User();
@@ -23,6 +24,10 @@ public class RegisterService {
 			return true;
 		}
 		return false;
+=======
+	public void addUser(User user) {
+		userdao.save(user);
+>>>>>>> db9f408 (Latest Changes)
 	}
 
 }
