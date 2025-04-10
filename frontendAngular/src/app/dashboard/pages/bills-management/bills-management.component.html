@@ -1,0 +1,84 @@
+
+<script src="https://kit.fontawesome.com/33e60c130d.js" crossorigin="anonymous"></script><!--for the icons-->
+<div class="dashboard">
+    <app-sidebar></app-sidebar> <!-- Sidebar -->
+    <main class="content">
+        <h2>Consult Bills</h2>
+        <hr>
+        <div class="filtre">
+            <select id="university" [(ngModel)]="selectedUniversity" (change)="updateChart();updateData()">
+                <option *ngFor="let uni of universities" [value]="uni">{{ uni }}</option>
+            </select>
+            <select id="month" [(ngModel)]="selectedMonth" (change)="updateChart();updateData()">
+                <option *ngFor="let mon of months" [value]="mon">{{ mon }}</option>
+            </select>
+        </div>
+        <div>
+        <table class="custom-table" *ngIf="getFilteredData() as data">
+            <tr>
+              <td class="header-column">Resource</td>
+              <td class="header-column">Unit cost</td>
+              <td class="header-column">Used quantity</td>
+              <td class="header-column">Total(€)</td>
+            </tr>
+            <tr>
+              <td>CPU(hours)</td>
+              <td>{{UnitCost[0]}} €/h</td>
+              <td>{{ data.CPU }} h</td>
+              <td>{{UnitCost[0]*data.CPU}} €</td>
+            </tr>
+            <tr class="row-style-2">
+              <td>Storage(GB)</td>
+              <td>{{UnitCost[1]}} €/h</td>
+              <td>{{ data.Storage }} GB</td>
+              <td>{{UnitCost[1] * data.Storage}} €</td>
+            </tr>
+            <tr>
+              <td>Network(GB)</td>
+              <td>{{UnitCost[2]}} €/h</td>
+              <td>{{ data.Network }} GB</td>
+              <td>{{UnitCost[2] * data.Network}} €</td>
+            </tr>
+            <tr class="row-style-4">
+                <td>RAM (GB)</td>
+                <td>{{UnitCost[3]}} €/h</td>
+                <td>{{ data.RAM }} GB</td>
+                <td>{{UnitCost[3] * data.RAM}} €</td>
+            </tr>
+            <tr>
+                <td class="total">Total</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="totalValue">{{UnitCost[3] * data.RAM + UnitCost[2] * data.Network + UnitCost[1] * data.Storage + UnitCost[0]*data.CPU}} €</td>
+            </tr>
+        </table>  
+        </div>  
+        <div class="boxes">
+            <div class="box">
+                <span>Resource Cost Distribution</span><hr>
+                <canvas #resourceChart></canvas>
+            </div>
+            <div class="box">
+                <span>(%) compared to the previous month</span> 
+                <hr>
+                <div *ngFor="let resource of resources">
+                    <div class="resource-header">
+                        <span class="resource-name">{{ resource.name }}</span> 
+                        <span [ngStyle]="{ color: resource.change >= 0 ? 'green' : 'red' }">
+                            {{ resource.change >= 0 ? '+' : '' }}{{ resource.change }}%<!--This ensures positive changes have a + sign, while negative changes just show the number.-->
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" [ngStyle]="{ width: resource.percentage + '%', backgroundColor: resource.color }"></div>
+                        <!--width: used quantity / total quantity *100 //// change % : ((current quantity - previous quantity) / previous quan) *100-->
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div class="telecharger">
+            <button class="download-btn">
+                <i class="fa-solid fa-download"></i> Download Invoice (PDF)
+            </button>
+        </div>
+    </main>
+</div>
