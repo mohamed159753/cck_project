@@ -1,0 +1,153 @@
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="mb-0">Manage Reservation</h4>
+        </div>
+
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-calendar-check"></i> Reporting
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        <i class="bi bi-journal-text"></i> Request
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-calendar-check"></i> Manage reservations
+                    </a>
+                </li>
+            </ul>
+
+            <h6 class="px-3 mt-4 mb-3 text-uppercase text-muted">Support</h6>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-question-circle"></i> Get Started
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-gear"></i> Account Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <h2 class="mb-4">Resource Reservation</h2>
+
+        <!-- University Selector -->
+        <select class="form-select" id="university-select" style="max-width: 300px;border-radius: 20px;margin-bottom: 30px;">
+            <option selected>UMA University</option>
+            <option>Harvard University</option>
+            <option>Stanford University</option>
+            <option>MIT</option>
+            <option>Oxford University</option>
+        </select>
+
+        <!-- Resource Card -->
+        <div class="card resource-card">
+            <div class="card-header">
+                Resource Type: ESC (Elastic Cloud Server)
+            </div>
+            <div class="card-body">
+                <table class="table resource-table">
+                    <tbody>
+                        <tr>
+                            <td>vCPU:</td>
+                            <td><input type="number" class="form-control" placeholder="Ex: 4"></td>
+                        </tr>
+                        <tr>
+                            <td>vRAM:</td>
+                            <td><input type="number" class="form-control" placeholder="Ex: 32GB"></td>
+                        </tr>
+                        <tr>
+                            <td>Storage:</td>
+                            <td><input type="number" class="form-control" placeholder="Ex: 100GB"></td>
+                        </tr>
+                        <tr>
+                            <td>Image:</td>
+                            <td><span class="badge bg-primary">Debian</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="request-card-footer">
+                <button class="btn btn-primary btn-lg">
+                    <i class="bi bi-send"></i> Send Request
+                </button>
+            </div>
+        </div>
+
+       <!-- AI Chatbot Card -->
+<div class="card chatbot-card chatbot-box">
+    <div class="card-header">
+        <i class="bi bi-robot"></i> AI Chatbot
+    </div>
+    <div class="card-body">
+        <!-- Chatbot Input Form -->
+        <form (ngSubmit)="onSubmit()">
+            <textarea class="form-control chatbot-textarea" [(ngModel)]="chatbot" name="chatbot" placeholder="Describe your needs here..." rows="4"></textarea>
+
+            <div class="text-end mt-3">
+                <button class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-arrow-right"></i> Submit
+                </button>
+            </div>
+        </form>
+
+        <!-- Chatbot Responses -->
+        <div class="chatbot-responses mt-3">
+            <div *ngIf="loading" class="text-center">
+                <i class="bi bi-hourglass-split"></i> Loading...
+            </div>
+
+            <!-- Displaying Chatbot Response -->
+            <div *ngIf="response">
+                <p><strong>vCPU:</strong> {{ response.response.vCPU }}</p>
+                <p><strong>Storage:</strong> {{ response.response.Storage }}</p>
+                <p><strong>RAM:</strong> {{ response.response.RAM }}</p>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="error" class="alert alert-danger mt-3">
+                Something went wrong. Please try again later.
+            </div>
+
+            <!-- Chat History -->
+            <div class="chat-history mt-3">
+                <div *ngFor="let message of messages">
+                    <div *ngIf="message.fromUser">
+                        <div class="user-message">
+                            <strong>You:</strong> {{ message.text }}
+                        </div>
+                    </div>
+                    <div *ngIf="!message.fromUser">
+                        <div class="bot-message">
+                            <strong>Bot:</strong> {{ message.text }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div class="footer">
+            <p class="mb-1"><strong>Navtel</strong></p>
+            <p class="text-muted mb-0">
+                <i class="bi bi-envelope"></i>
+            </p>
+        </div>
+    </div>
+</div>
