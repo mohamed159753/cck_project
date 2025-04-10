@@ -1,0 +1,66 @@
+<script src="https://kit.fontawesome.com/33e60c130d.js" crossorigin="anonymous"></script>
+
+<div class="dashboard">
+    <app-sidebar></app-sidebar> <!-- Sidebar -->
+    <main class="content">
+        <h2>Reports</h2>
+        <hr>
+        <div class="filtre">
+            <select id="university" [(ngModel)]="selectedUniversity" (change)="updateChart();updateProgressBar()">
+                <option *ngFor="let uni of universities" [value]="uni">{{ uni }}</option>
+            </select>
+            <select id="resource" [(ngModel)]="selectedResource" (change)="updateChart();updateProgressBar()">
+                <option *ngFor="let res of resources" [value]="res">{{ res }}</option>
+            </select>
+        </div>
+        <div class="grid-container">
+            <div class="dashboard-container">
+                <div *ngIf="getFilteredData() as data" class="stats-container" >
+                    <p class="stat-box">Reservations <span><br>{{ data.reservations }}</span></p>
+                    <p class="stat-box">Pending <span><br>{{ data.pending }}</span></p>
+                    <p class="stat-box">Approved <span><br>{{ data.approved }}</span></p>
+                    <p class="stat-box">Total Quota <span><br>{{ data.totalQuota }}</span></p>
+                    <p class="stat-box">Current Use <span><br>{{ data.currentUse | number:'1.1-2' }}%</span></p><!--1.1-2 means at least 1 digit before the decimal, 1 to 2 digits after the decimal-->
+                    <p class="stat-box">To Be Used <span><br>{{ data.toBeUsed | number:'1.1-2' }}%</span></p><!--Pipe to transform the pourcentage-->
+                </div>
+            </div>
+            <div class="box">
+                <span>Usage statistics</span>
+                <hr>
+                <div class="chart-container">
+                    <canvas #barChart></canvas>
+                </div>
+            </div>
+
+            <div class="box">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
+                <span>Alerts</span>
+                <hr>
+                <mat-progress-bar 
+                    class="progress" 
+                    [mode]="'determinate'" 
+                    [value]="progress" >
+                </mat-progress-bar>
+                <div *ngIf="alertMessage" class="alert-message" [ngStyle]="{color: alertColor}">{{ alertMessage }}</div>
+                <div *ngIf="info" class="message">{{ info }}</div>
+                <div *ngIf="sug" class="message">{{ sug }}</div>
+            </div>
+            
+            <div class="box">
+                <span>
+                  Top 3 {{ selectedUniversity === 'All' ? 'Universities' : 'Institutions' }} ({{ selectedResource }})
+                </span>
+              <!--
+                <div class="top-consumers">
+                  <div *ngFor="let item of topConsumers" class="consumer-entry">
+                    <strong>{{ item.name }}</strong>: {{ item.value }}%
+                    <mat-progress-bar mode="determinate" [value]="item.value"></mat-progress-bar>
+                  </div>
+                </div>-->
+            </div>
+
+            <div class="box"><span>Past uses (CPU)</span></div>
+            <div class="box"><span>Forecasted Usage (CPU)</span></div>
+        </div>
+    </main>
+</div>
