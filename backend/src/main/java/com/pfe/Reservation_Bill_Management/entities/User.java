@@ -7,11 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-<<<<<<< HEAD
 @Table(name = "utilisateur")
-=======
-@Table(name = "HTE_USER")
->>>>>>> db9f408 (Latest Changes)
 public class User {
 	
 	@Id	
