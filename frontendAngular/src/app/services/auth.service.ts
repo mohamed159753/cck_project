@@ -12,7 +12,7 @@ export class AuthSerivce {
 
   login(creds: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, creds);
-  }
+  }// Send the credentials to the backend
 
   register(creds: any): Observable<any>{
     return this.http.post<any>(`${this.apiUrl}/register`, creds)

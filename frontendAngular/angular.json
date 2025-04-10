@@ -24,27 +24,16 @@
               {
                 "glob": "**/*",
                 "input": "public"
-<<<<<<< HEAD
-              }
-            ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css"
-            ],
-            "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ]
-=======
               },
               "src/assets"
             ],
             "styles": [
               "src/custom-theme.scss",
               "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
             ],
             "scripts": []
->>>>>>> db9f408 (Latest Changes)
           },
           "configurations": {
             "production": {
@@ -97,12 +86,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-<<<<<<< HEAD
-              }
-=======
               },
               "src/assets"
->>>>>>> db9f408 (Latest Changes)
             ],
             "styles": [
               "src/styles.css"
@@ -112,11 +97,8 @@
         }
       }
     }
-<<<<<<< HEAD
-=======
   },
   "cli": {
     "analytics": "d3e3d774-8264-432b-ae1d-cf6293f29796"
->>>>>>> db9f408 (Latest Changes)
   }
 }
