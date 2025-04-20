@@ -1,0 +1,219 @@
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+app-university-sidebar {
+  width: 20%;
+  background-color: white;
+  min-height: 100vh;
+}
+
+.dashboard-container {
+  width: 80%;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  color: #212529;
+  margin: 0;
+  font-weight: bold;
+  
+}
+
+.title-divider {
+  opacity: 0.15;
+  margin: 15px 0;
+  border: 0;
+  border-top: 1px solid #000;
+  width: 100%;
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.month-selector label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.month-selector select {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.stats-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.card {
+  flex: 1;
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #555;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.card-value {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+.institute-chart .institute-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.institute-name {
+  width: 100px;
+  font-weight: bold;
+}
+
+.progress-container {
+  flex: 1;
+  height: 30px;
+  background-color: #eee;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 0 15px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #4CAF50;
+  border-radius: 15px;
+}
+
+.percentage {
+  width: 50px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .stats-cards {
+    flex-wrap: wrap;
+  }
+  
+  .card {
+    flex: 0 0 calc(50% - 20px);
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  app-university-sidebar {
+    width: 100%;
+    min-height: auto;
+  }
+  
+  .dashboard-container {
+    width: 100%;
+  }
+  
+  .institute-bar {
+    flex-wrap: wrap;
+  }
+  
+  .institute-name {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .progress-container {
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .card {
+    flex: 0 0 100%;
+  }
+  
+  .month-selector {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .month-selector label {
+    margin-bottom: 5px;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,64 @@
+<div class="app-layout">
+  <app-university-sidebar></app-university-sidebar>
+
+  <div class="billing-container">
+    <div class="billing-header">
+      <h2>Billing Invoice</h2>
+    </div>
+
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="onStatusChange(statusFilter)">
+          <option value="All">All</option>
+          <option value="Paid">Paid</option>
+          <option value="Unpaid">Unpaid</option>
+        </select>
+      </div>
+
+      <div class="filter-group year-filter">
+        <label>Year:</label>
+        <select [(ngModel)]="selectedYear" (change)="onYearChange(selectedYear)">
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-section">
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>Invoice #</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let invoice of invoices">
+            <td>Inv#{{ invoice.invoiceId }}</td>
+            <td>{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ invoice.dueDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ invoice.totalAmount }} €</td>
+            <td>
+              <span class="status-badge" [ngClass]="invoice.status.toLowerCase()">
+                <!--The span [ngClass] should match paid and unpaid (lowercase), but my invoice.status is probably Paid / Unpaid. So I added .toLowerCase()-->
+                {{ invoice.status }}
+              </span>
+            </td>
+            <td>
+              <button class="details-btn" (click)="viewDetails(invoice)">
+                Details <i class="fas fa-chevron-right"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="invoices.length === 0">
+            <td colspan="6" class="no-data">No invoices found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

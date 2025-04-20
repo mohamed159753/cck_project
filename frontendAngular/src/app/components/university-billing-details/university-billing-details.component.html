@@ -1,0 +1,79 @@
+<div class="app-layout">
+    <!-- The sidebar component -->
+    <app-university-sidebar></app-university-sidebar>
+    
+    <!-- Main content area -->
+    <div class="details-container" *ngIf="invoice">
+      <div class="details-header">
+        <h2>Billing invoice</h2>
+      </div>
+      <hr>
+      
+      <div class="invoice-details-table">
+        <div class="table-row header-row">
+          <div class="field-column">Field</div>
+          <div class="description-column">Description</div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Invoice ID</div>
+          <div class="description-column">{{ invoice.invoiceId }}</div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Date Issued</div>
+          <div class="description-column">{{ invoice.issueDate }}</div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Due Date</div>
+          <div class="description-column">{{ invoice.dueDate }}</div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Amount (€)</div>
+          <div class="description-column">{{ invoice.totalAmount }} €</div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Status</div>
+          <div class="description-column">
+            <span class="status-badge" [ngClass]="invoice.status.toLowerCase()">
+              {{ invoice.status }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Download</div>
+          <div class="description-column">
+            <button class="pdf-button" (click)="downloadPDF()">
+              <i class="fas fa-file-pdf"></i> PDF
+            </button>
+          </div>
+        </div>
+        
+        <div class="table-row">
+          <div class="field-column">Action</div>
+          <div class="description-column">
+            <div class="action-buttons">
+              <button *ngIf="invoice.status === 'Unpaid'" class="pay-now-btn" (click)="payNow()">
+                Pay Now
+              </button>
+              <button *ngIf="invoice.status === 'Paid'" class="pay-now-btn paid-btn" disabled>
+                Pay Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #loading>
+        <p>Loading invoice details...</p>
+      </ng-template>
+      <div class="back-button-container">
+        <button class="back-btn" (click)="goBack()">
+          ← Back to Billing
+        </button>
+      </div>
+    </div>
+  </div>

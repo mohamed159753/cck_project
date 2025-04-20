@@ -1,0 +1,53 @@
+<!-- components/plans/plans.component.html -->
+<div class="pricing-container">
+    <div class="header">
+      <img src="assets/logo UMA.png" alt="Logo" class="logo">
+      <h1 class="welcome-title">Welcome <span class="welcome-accent">!</span></h1>
+    </div>
+    
+    <div class="pricing-cards">
+      <div *ngFor="let plan of pricingPlans" class="pricing-card" [ngClass]="plan.color">
+        <div class="card-header">
+          <div class="plan-title">
+            <span class="plan-icon">{{ plan.icon }}</span>
+            <span class="plan-name">{{ plan.title }}</span>
+          </div>
+          <div *ngIf="plan.popular" class="popular-tag">Most Popular</div>
+        </div>
+        
+        <div class="features-container">
+          <ul class="features-list">
+            <li *ngFor="let feature of plan.features">{{ feature }}</li>
+          </ul>
+        </div>
+        
+        <div class="specs">
+          <div class="spec-item">
+            <span class="spec-label">CPU:</span>
+            <span class="spec-value">{{ plan.specs.cpu }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">RAM:</span>
+            <span class="spec-value">{{ plan.specs.ram }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Storage:</span>
+            <span class="spec-value">{{ plan.specs.storage }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Network:</span>
+            <span class="spec-value">{{ plan.specs.network }}</span>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <div class="price-section">
+            <span class="price-icon">💰</span>
+            <span class="price">{{ plan.price }}</span>
+          </div>
+          
+          <button class="get-started-btn" (click)="getPlan(plan.title)">Get Started</button>
+        </div>
+      </div>
+    </div>
+  </div>

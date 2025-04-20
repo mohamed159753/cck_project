@@ -1,0 +1,217 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.app-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+app-university-sidebar {
+  width: 20%;
+  background-color: white;
+  height: 100vh;
+}
+
+.billing-container {
+  width: 80%;
+  background-color: #f9f9f9;
+  padding: 30px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  transition: all 0.3s ease; /* Match sidebar transition */
+}
+
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.billing-header h2 {
+  font-size: 1.8rem;
+  color: #212529;
+  margin: 0;
+}
+
+.filters-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.filter-group select {
+  background-color: white;
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  border: 1px solid #ccc;
+}
+
+.table-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-table th, 
+.invoice-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.invoice-table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+}
+
+.invoice-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.paid {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.unpaid {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.details-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: transparent;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.details-btn:hover {
+  color: #0d6efd;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+/* Responsive styles to match the sidebar */
+@media screen and (max-width: 1024px) {
+  app-university-sidebar {
+    width: 25%;
+  }
+  
+  .billing-container {
+    width: 75%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  app-university-sidebar {
+    width: 60px;
+  }
+  
+  .billing-container {
+    width: calc(100% - 60px);
+    padding: 20px;
+  }
+  
+  /* Handle sidebar expanded state */
+  .sidebar.expanded + .app-layout .billing-container {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+  }
+  
+  .filters-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .invoice-table th,
+  .invoice-table td {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+  
+  .billing-header h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .app-layout {
+    flex-direction: column;
+  }
+  
+  app-university-sidebar {
+    width: 100%;
+    height: 50px;
+    min-height: 50px;
+  }
+  
+  .billing-container {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 50px; /* Space for the fixed sidebar header */
+    padding: 15px;
+  }
+  
+  .invoice-table {
+    min-width: 600px; /* Ensure horizontal scrolling for small screens */
+  }
+  
+  .table-section {
+    padding: 10px;
+  }
+  
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .billing-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

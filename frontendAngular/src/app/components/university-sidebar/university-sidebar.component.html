@@ -1,0 +1,48 @@
+<head>
+    <script src="https://kit.fontawesome.com/33e60c130d.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="assets/logo.png" alt="CCK's logo" class="logo">
+        <button class="menu-toggle" id="toggleSidebar" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+    <div class="sidebar-content">
+        <div class="icon">
+            <i class="fa-solid fa-chart-simple"></i>
+            <a routerLink="/components/university-reports" routerLinkActive="active">Reports</a>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-users-gear"></i>
+            <a routerLink="/dashboard/pages/manage-reservations" routerLinkActive="active">Manage reservations</a>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-money-bill-trend-up"></i>
+            <a routerLink="/dashboard/pages/university-billing" routerLinkActive="active">Billing</a>
+        </div>
+        <h3>Support</h3>
+        <div class="icon">
+            <i class="fa-solid fa-lightbulb"></i>
+            <a>Get started</a>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-gear"></i>
+            <a>Settings</a>
+        </div>
+    </div>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('expanded');
+        });
+    }
+});
+</script>
