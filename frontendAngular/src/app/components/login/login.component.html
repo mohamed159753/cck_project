@@ -1,17 +1,77 @@
 <div class="auth-container">
-    <div class="auth-box">
-      <h2>Login</h2>
-      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-        <div class="input-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" [(ngModel)]="username" name="username" required />
-        </div>
-        <div class="input-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" [(ngModel)]="password" name="password" required />
-        </div>
-        <button type="submit">Login</button>
-        <p class="register-link">Don't have an account? <a href="/register">Register</a></p>
-      </form>
+  <div class="auth-box">
+    <h2>Login</h2>
+    
+    <!-- Login Type Toggle -->
+    <div class="login-type-toggle">
+      <button 
+        [class.active]="loginType === 'professor'" 
+        (click)="setLoginType('professor')"
+      >
+        Professor Login
+      </button>
+      <button 
+        [class.active]="loginType === 'university'" 
+        (click)="setLoginType('university')"
+      >
+        University Login
+      </button>
     </div>
+
+    <!-- Professor Login Form (default) -->
+    <form *ngIf="loginType === 'professor'" (ngSubmit)="onSubmit()" #professorForm="ngForm">
+      <div class="input-group">
+        <label for="professor-email">Email</label>
+        <input type="email" id="professor-email" 
+               [(ngModel)]="username" 
+               name="professorEmail" required email />
+      </div>
+      <div class="input-group">
+        <label for="professor-password">Password</label>
+        <input type="password" id="professor-password" 
+               [(ngModel)]="password" 
+               name="professorPassword" required />
+      </div>
+      <button type="submit">Login as Professor</button>
+    </form>
+
+    <!-- University Admin Login Form -->
+    <form *ngIf="loginType === 'university'" (ngSubmit)="onUniversityLogin()" #universityForm="ngForm">
+      <div class="input-group">
+        <label for="university-project">University</label>
+        
+        <select class="form-select form-select-sm" id="university-project" 
+                [(ngModel)]="universityCredentials.projectId" 
+                name="universityProject" required
+                [disabled]="isLoadingProjects">
+          <option value="" disabled selected>Select your university</option>
+          <option *ngFor="let project of projects" [value]="project.id">
+            {{ project.name }}
+          </option>
+        </select>
+        <div *ngIf="isLoadingProjects" class="loading-text">
+          Loading universities...
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="admin-username">Admin Username</label>
+        <input type="text" id="admin-username" 
+               [(ngModel)]="universityCredentials.username" 
+               name="adminUsername" required />
+      </div>
+      <div class="input-group">
+        <label for="admin-password">Admin Password</label>
+        <input type="password" id="admin-password" 
+               [(ngModel)]="universityCredentials.password" 
+               name="adminPassword" required />
+      </div>
+      <button type="submit" [disabled]="isLoadingProjects">
+        Login as University Admin
+      </button>
+    </form>
+
+    <p class="register-link">
+      Don't have an account? <a href="/register">Register</a>
+    </p>
   </div>
+</div>

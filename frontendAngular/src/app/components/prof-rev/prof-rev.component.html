@@ -55,29 +55,43 @@
         </select>
 
         <!-- Resource Card -->
+    <form (ngSubmit)="onSubmitRequest()">
         <div class="card resource-card">
             <div class="card-header">
                 Resource Type: ESC (Elastic Cloud Server)
             </div>
             <div class="card-body">
                 <table class="table resource-table">
-                    <tbody>
+                    <select class="form-select form-select-sm" id="flavors" [(ngModel)]="selectedFlavorId" name="flavorSelect" (change)="onFlavorSelect($event)">
+                        <option value="" disabled selected>Please select a flavor</option>
+                        <option *ngFor="let flavor of flavors" [value]="flavor.id" >
+                          CPU : {{ flavor.vcpus }} , RAM : {{flavor.ram}} MB
+                        </option>
+                      </select>
+                    <tbody *ngIf="selectedFlavor">
                         <tr>
                             <td>vCPU:</td>
-                            <td><input type="number" class="form-control" placeholder="Ex: 4"></td>
+                            <td>{{selectedFlavor.vcpus}}</td>
                         </tr>
                         <tr>
                             <td>vRAM:</td>
-                            <td><input type="number" class="form-control" placeholder="Ex: 32GB"></td>
+                            <td>{{selectedFlavor.ram}}  MB </td>                       
                         </tr>
-                        <tr>
-                            <td>Storage:</td>
-                            <td><input type="number" class="form-control" placeholder="Ex: 100GB"></td>
-                        </tr>
-                        <tr>
-                            <td>Image:</td>
-                            <td><span class="badge bg-primary">Debian</span></td>
-                        </tr>
+                    <tr>
+                        <td>Storage:</td>
+                        <td><input type="number" class="form-control" [(ngModel)]="storage" name="storage" placeholder="Ex: 100GB"></td>
+                    </tr>
+
+                    <tr>
+                        <td>Image:</td>
+                        <select class="form-select form-select-sm" id="images"  [(ngModel)]="selectedImageId" name="imageSelect">
+                            <option value="" disabled selected>Please select an image</option>
+                            <option *ngFor="let image of images" [value]="image.id">
+                              {{image.name}}
+                            </option>
+                          </select>
+                    </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -87,6 +101,7 @@
                 </button>
             </div>
         </div>
+    </form>
 
        <!-- AI Chatbot Card -->
 <div class="card chatbot-card chatbot-box">

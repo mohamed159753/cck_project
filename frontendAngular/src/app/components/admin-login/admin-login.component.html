@@ -1,0 +1,31 @@
+<div class="auth-container">
+    <div class="auth-box">
+      <h2>Admin Login</h2>
+      
+    
+      
+  
+      <!-- Professor Login Form (default) -->
+      <form (ngSubmit)="onSubmit()" #professorForm="ngForm">
+        <div class="input-group">
+          <label for="admin-email">Email</label>
+          <input type="email" id="professor-email" 
+                 [(ngModel)]="username" 
+                 name="email" required email />
+        </div>
+        <div class="input-group">
+          <label for="admin-password">Password</label>
+          <input type="password" id="professor-password" 
+                 [(ngModel)]="password" 
+                 name="password" required />
+        </div>
+        <button type="submit">Login as Admin</button>
+      </form>
+  
+      
+  
+      <p class="register-link">
+        Don't have an account? <a href="/register">Register</a>
+      </p>
+    </div>
+  </div>

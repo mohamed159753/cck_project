@@ -1,0 +1,54 @@
+<div class="container mt-4">
+    <div class="row" *ngFor="let host of metrics | keyvalue">
+      <div class="col-md-6 mb-4">
+        <div class="card shadow border-0">
+          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-hdd-network me-2"></i> {{ host.key }}
+            </h5>
+            <span class="badge bg-info text-dark">Host Metrics</span>
+          </div>
+  
+          <div class="card-body" *ngIf="$any(host.value) as value">
+            <!-- CPU Section -->
+            <div class="mb-3">
+              <h6><i class="bi bi-cpu me-2"></i>CPU Usage</h6>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar"
+                  [ngClass]="{
+                    'bg-success': value.cpu_usage <= 50,
+                    'bg-warning': value.cpu_usage > 50 && value.cpu_usage <= 80,
+                    'bg-danger': value.cpu_usage > 80
+                  }"
+                  [style.width.%]="value.cpu_usage">
+                  
+                </div>
+              </div>
+            </div>
+            {{ value.cpu_usage }}%
+  
+            <!-- Memory Section -->
+            <div class="mb-3">
+              <h6><i class="bi bi-memory me-2"></i>Memory</h6>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Usage: {{ value.memory_usage_percent }}%</li>
+                <li class="list-group-item">Used: {{ value.memory_used_MB }} MB</li>
+                <li class="list-group-item">Available: {{ value.memory_available_MB }} MB</li>
+                <li class="list-group-item">Total: {{ value.memory_total_MB }} MB</li>
+              </ul>
+            </div>
+  
+            <!-- Network Section -->
+            <div>
+              <h6><i class="bi bi-wifi me-2"></i>Network</h6>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Sent: {{ value.network?.sent_kbps ?? 0 }} KB/s</li>
+                <li class="list-group-item">Received: {{ value.network?.recv_kbps ?? 0 }} KB/s</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

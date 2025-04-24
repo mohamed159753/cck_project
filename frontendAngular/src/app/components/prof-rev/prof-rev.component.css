@@ -93,12 +93,14 @@ body {
     resize: none;
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    padding: 10px 25px;
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:visited {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #2175e3 !important;
 }
-
 .divider {
     border-top: 1px solid rgba(0,0,0,0.1);
     margin: 25px 0;

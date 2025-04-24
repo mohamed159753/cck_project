@@ -15,9 +15,9 @@ public class LoginService {
         this.userdao = userdao;
     }
 
-    public Boolean isValid(String username, String password) {
+    public Boolean isValid(String email, String password) {
 
-        User user = userdao.findByUsername(username);
+        User user = userdao.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
             return true;
         }
