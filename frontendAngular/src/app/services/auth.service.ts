@@ -8,13 +8,13 @@ import { Observable, tap } from 'rxjs';
 export class AuthSerivce {
   private apiUrl = 'http://localhost:8080/api';
 
-  private baseUrl = 'http://localhost:5001'
+  private baseUrl = 'http://localhost:5002'
 
   constructor(private http: HttpClient) {}
 
   login(creds: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, creds);
-  }
+  }// Send the credentials to the backend
 
   register(creds: any): Observable<any>{
     return this.http.post<any>(`${this.apiUrl}/register`, creds)
@@ -61,11 +61,20 @@ export class AuthSerivce {
     return this.http.get<any>(`${this.baseUrl}/fetchProjects`)
   }
 
+  getUni(): Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/universities`)
+  }
+
+  getUniById(id:any): Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/universities/${id}`)
+  }
+
   adminLogin(creds: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/adminlogin`, creds);
   }
 
   uniLogin(creds: any): Observable<any> {
+    
     return this.http.post<any>(`${this.baseUrl}/uniLogin`, creds);
   }
 

@@ -1,0 +1,56 @@
+<!-- Mobile menu toggle button -->
+<div class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<!-- Sidebar navigation -->
+<nav [class.mobile-open]="isMobileMenuOpen">
+  <!-- Close button for mobile -->
+  <div class="close-mobile-menu" (click)="toggleMobileMenu()" *ngIf="isMobileMenuOpen">
+    <i class="fa-solid fa-xmark"></i>
+  </div>
+
+  <!-- Logo -->
+  <div class="logo-container">
+    <img src="assets/logo.png" alt="CCK's logo" class="logo">
+  </div>
+
+  <!-- Main Navigation -->
+  <div class="nav-section">
+    <div class="icon" routerLinkActive="active">
+      <i class="fa-solid fa-chart-simple"></i>
+      <a [routerLink]="'/prof/reports'">Report</a>
+    </div>
+    <div class="icon" routerLinkActive="active">
+    <i class="fa-solid fa-plus"></i>
+    <a [routerLink]="'/prof/request'">Request</a>
+    </div>
+    <div class="icon" routerLinkActive="active">
+      <i class="fa-solid fa-users-gear"></i>
+      <a [routerLink]="'/prof/reservations'">Reservations</a>
+    </div>
+    <div class="icon" routerLinkActive="active">
+      <i class="fa-solid fa-money-bill-trend-up"></i>
+      <a [routerLink]="'/prof/metrics'">Metrics</a>
+    </div>
+   
+  </div>
+
+  <!-- Support Section -->
+  <div class="nav-section">
+    <h3>Support</h3>
+
+    <div class="icon">
+      <i class="fa-solid fa-gear"></i>
+      <a [routerLink]="'/prof/me'">Personal Information</a>
+
+
+    </div>
+    <div class="icon">
+      <i class="fa-solid fa-shield"></i>
+      <a [routerLink]="'/prof/me/change-password'">Security</a>
+
+
+    </div>
+  </div>
+</nav>

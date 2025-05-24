@@ -1,0 +1,117 @@
+<!-- Main container with responsive layout -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar (col sizes adjust based on screen width) -->
+    <div class="sidebar-container col-auto p-0">
+      <app-university-sidebar></app-university-sidebar>
+    </div>
+    
+    <!-- Main Content (adapts to sidebar width) -->
+    <div class="main-content col">
+      <div class="manage-reservations p-4">
+        <h1 class="mb-4" style="margin-left: 250px;">Manage Reservation</h1>
+        <hr>
+        
+        <!-- Reservation Requests Card -->
+        <div class="card">
+          <div class="card-header">
+            <h2>Reservation Requests</h2>
+          </div>
+          <div class="card-body">
+            <!-- Responsive table -->
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Rev#</th>
+                    <th>Reservation Date</th>
+                    <th>Resource Type</th>
+                    <th>Request Details</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let reservation of reservations; let i = index">
+                    <!-- Reservation row -->
+                    <tr>
+                      <td>Rev#{{ reservation.id }}</td>
+                      <td>{{ formatDate(reservation.startTime) }}</td>
+                      <td>{{ reservation.resource.type }}</td>
+                      <td>
+                        Request: {{ reservation.resource.type }} 
+                        <!-- Resource specifications could be added here -->
+                      </td>
+                      <td>
+                        <span class="badge rounded-pill" [ngClass]="getStatusClass(reservation.status)">
+                          {{ reservation.status }}
+                        </span>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-info" (click)="toggleDetails(reservation.id)">
+                          <i class="fa" [ngClass]="expandedReservationId === reservation.id ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    
+                    <!-- Expanded details row -->
+                    <tr *ngIf="expandedReservationId === reservation.id">
+                      <td colspan="6">
+                        <div class="reservation-details p-3 bg-light">
+                          <div class="row">
+                            <!-- Professor information -->
+                            <div class="col-md-6">
+                              <p><strong>Professor Name:</strong> {{ reservation.professor.username }}</p>
+                              <p><strong>Professor CIN:</strong> {{ reservation.professor.cin }}</p>
+                              <p><strong>Institute:</strong> {{ reservation.professor.institute }}</p>
+                            </div>
+                            
+                            <!-- Reservation details -->
+                            <div class="col-md-6">
+                              <p><strong>Start Date:</strong> {{ formatDate(reservation.startTime) }}</p>
+                              <p><strong>End Date:</strong> {{ formatDate(reservation.endTime) }}</p>
+                              <p><strong>Price per Hour:</strong> {{ reservation.resource.pricePerHour | currency }}</p>
+                            </div>
+                          </div>
+                          
+                          <!-- Action buttons (only visible for pending university reservations) -->
+                          <div class="action-buttons mt-3" *ngIf="reservation.status === approvalStatus.PENDING_UNIVERSITY">
+                            <button class="btn btn-success me-2" (click)="approveReservation(reservation)">
+                              <i class="fa fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" (click)="declineReservation(reservation)">
+                              <i class="fa fa-times"></i> Decline
+                            </button>
+                          </div>
+                          
+                          <!-- Status message for non-pending items -->
+                          <div class="status-message mt-3" *ngIf="reservation.status !== approvalStatus.PENDING_UNIVERSITY">
+                            <p class="mb-0">
+                              <i class="fa" 
+                                 [ngClass]="{
+                                   'fa-check-circle text-success': reservation.status === approvalStatus.APPROVED_UNIVERSITY || reservation.status === approvalStatus.APPROVED_CCK,
+                                   'fa-times-circle text-danger': reservation.status === approvalStatus.REJECTED_UNIVERSITY || reservation.status === approvalStatus.REJECTED_CCK,
+                                   'fa-clock-o text-secondary': reservation.status === 'EXPIRED',
+                                   'fa-spinner fa-spin text-info': reservation.status === 'Processing...' || reservation.status === approvalStatus.PENDING_CCK
+                                 }"></i>
+                              Status: <strong>{{ reservation.status }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+              
+              <!-- Empty state message -->
+              <div *ngIf="reservations.length === 0" class="text-center py-4">
+                <p>No reservation requests found.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

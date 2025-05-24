@@ -1,0 +1,18 @@
+.container {
+  margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin-left: 0; /* Removes sidebar margin on smaller screens */
+    padding: 1rem;
+  }
+}
+.mb-4{
+    color: #0086AA;
+}
+
+.card {
+  max-width: 100%;
+  width: 100%;
+}

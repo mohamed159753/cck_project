@@ -1,0 +1,147 @@
+html, body {
+    height: 100%; /* Ensure body takes full height */
+    margin: 0;
+    background-color: #f9f9f9; /* Main background color */
+}
+
+
+.dashboard {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%; /* Full width */
+    /*position: fixed;  Sticks to all sides */
+    overflow: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.content {
+    min-height: 100%; /* Ensure content takes full height of the screen */
+    flex-grow: 1;
+    padding: 30px;
+    margin-left: 22%;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f9f9f9; /* Adjust main background */
+}
+.content h2 {
+    margin-bottom: 30px; /* Space between title and grid */
+}
+.content hr {
+    margin-bottom: 25px; /* Space between hr and grid */
+    opacity: 15%;
+}
+.filtre{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 20px; /* Adds spacing between items */
+    margin-bottom: 20px;
+}
+select{
+    background-color: white;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table td {
+    border-right: 1px solid #D0B8B8; /* Border between columns */
+    padding: 10px;
+}
+
+.custom-table td:last-child {
+    border-right: none; /* Remove border for the last column */
+}
+
+.header-column {
+    background-color: #ddebda;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+}
+.row-style-2 td, .row-style-4 td {
+    background-color: #e8eff2;
+    color: black;
+}
+.total{
+    font-weight: bold;
+}
+.totalValue{
+    font-weight: bold;
+    color: #E51837;
+}
+.boxes {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 20px; /* Adds spacing between items */
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.box span{
+    font-size: 14px;
+}
+.telecharger {
+    margin: 30px;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically (if parent has a height) */
+}
+
+.download-btn {
+    background-color: #E51837;
+    opacity: 70%;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    padding: 10px 20px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 233px;
+    gap: 8px; /* Space between icon and text */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.download-btn i {
+    color: white; /* Ensures icon color is white */
+}
+canvas {
+    display: block;
+    width: 300px !important;
+    margin: auto;
+}
+
+
+.progress-bar {
+    margin-bottom: 15px;
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .progress {
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+  }
+  
+  .filters {
+    margin-top: 20px;
+  }
+  

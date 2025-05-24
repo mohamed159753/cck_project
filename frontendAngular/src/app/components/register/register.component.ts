@@ -12,14 +12,50 @@ import { AuthSerivce } from '../../services/auth.service';
 })
 export class RegisterComponent {
 
-  constructor(private authSerice:AuthSerivce){}
+  constructor(private authService:AuthSerivce){}
 
-  username =''
-  email = ''
-  password = ''
+
+  ProfessorCredentials = {
+    projectId: '',
+    institut : '',
+    username: '',
+    email:'',
+    cin:'',
+    password: ''
+  };
+
+  projects: any[] = [];
+  isLoadingProjects = false;
+
+  ngOnInit() {
+    this.loadProjects();
+  }
+
+  loadProjects() {
+    this.isLoadingProjects = true;
+    this.authService.getUni().subscribe(
+      (response: any) => {
+        this.projects = response || []; 
+        console.log(this.projects);
+        this.isLoadingProjects = false;
+      },
+      (error) => {
+        console.error('Failed to load projects', error);
+        this.isLoadingProjects = false;
+      }
+    );
+  }
+
 
   onSubmit(){
-    this.authSerice.register({username:this.username, email:this.email, password:this.password}).subscribe((response)=>{
+    console.log(this.ProfessorCredentials.projectId)
+    this.authService.register({
+      projectId:this.ProfessorCredentials.projectId,
+       username:this.ProfessorCredentials.username, 
+       email:this.ProfessorCredentials.email,
+       cin:this.ProfessorCredentials.cin, 
+       password:this.ProfessorCredentials.password,
+        institut:this.ProfessorCredentials.institut}).subscribe((response)=>{
       console.log(response)
     })
   }

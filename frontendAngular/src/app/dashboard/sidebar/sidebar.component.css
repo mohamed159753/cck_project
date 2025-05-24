@@ -1,0 +1,157 @@
+
+/* Basic styling for the sidebar */
+nav {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    min-width: 220px;
+    background-color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    padding: 15px;
+    color: black;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Logo styling */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.logo {
+    max-width: 150px;
+    height: auto;
+}
+
+/* Navigation sections */
+.nav-section {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+h3 {
+    font-size: 14px;
+    color: #777;
+    margin: 20px 0 15px 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Icon and link styling */
+.icon {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.icon i {
+    font-size: 16px;
+    width: 24px;
+    margin-right: 12px;
+    text-align: center;
+}
+
+.icon a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 14px;
+    flex-grow: 1;
+}
+
+/* Hover and active states */
+.icon:hover {
+    color: #1B59F8;
+    background-color: #E8EEFE;
+}
+
+.icon.active {
+    color: #1B59F8;
+    background-color: #E8EEFE;
+    font-weight: 600;
+}
+
+/* Mobile menu toggle (hidden by default) */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #1B59F8;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background-color: #0D47A1;
+    transform: scale(1.05);
+}
+
+.close-mobile-menu {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+    display: none;
+}
+
+/* Responsive styles */
+@media screen and (max-width:1440px) {
+    nav {
+        
+        width: 300px;
+        padding: 20px 15px;
+    }
+    
+}
+@media screen and (max-width:1024px) {
+    nav {
+        
+        width: 280px;
+        padding: 20px 15px;
+    }
+    
+}
+@media screen and (max-width: 768px) {
+    nav {
+        transform: translateX(-100%);
+        width: 250px;
+        padding: 20px 15px;
+    }
+    
+    nav.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .close-mobile-menu {
+        display: block;
+    }
+    
+    /* Adjust content margin in bills-management component */
+    /* Note: This won't work here, needs to be in the parent component */
+}

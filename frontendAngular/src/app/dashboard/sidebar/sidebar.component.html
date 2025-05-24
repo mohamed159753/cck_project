@@ -1,0 +1,47 @@
+<!-- Mobile menu toggle button (visible only on small screens) -->
+<div class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+    <i class="fa-solid fa-bars"></i>
+</div>
+
+<!-- Sidebar navigation -->
+<nav [class.mobile-open]="isMobileMenuOpen">
+    <!-- Close button for mobile -->
+    <div class="close-mobile-menu" (click)="toggleMobileMenu()" *ngIf="isMobileMenuOpen">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="assets/logo.png" alt="CCK's logo" class="logo">
+    </div>
+    
+    <!-- Navigation links -->
+    <div class="nav-section">
+        <div class="icon" routerLinkActive="active">
+            <i class="fa-solid fa-chart-simple"></i>
+            <a routerLink="/dashboard/reports">Reports</a>
+        </div>
+        
+        <div class="icon" routerLinkActive="active">
+            <i class="fa-solid fa-users-gear"></i>
+            <a routerLink="/dashboard/manage-reservations">Manage reservations</a>
+        </div>
+        
+        <div class="icon" routerLinkActive="active">
+            <i class="fa-solid fa-money-bill-trend-up"></i>
+            <a routerLink="/dashboard/bills-management">Bills Management</a>
+        </div>
+        
+    
+    <!-- Support section -->
+    <div class="nav-section">
+        <h3>Support</h3>
+        
+        
+        <div class="icon">
+            <i class="fa-solid fa-gear"></i>
+            <a>Settings</a>
+        </div>
+    </div>
+    </div>
+</nav>

@@ -1,0 +1,65 @@
+<app-prof-sidebar></app-prof-sidebar>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="card shadow-sm p-4">
+        <h2 class="mb-4">
+          <i class="fas fa-user-edit me-2"></i> Update Profile
+        </h2>
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
+          <!-- Email (editable) -->
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="fas fa-envelope me-1"></i> Email:
+              <i class="fas fa-pen text-secondary ms-1"></i>
+            </label>
+            <input formControlName="email" type="email" class="form-control" placeholder="Enter your email" />
+          </div>
+
+          <!-- Name (read-only) -->
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="fas fa-user me-1"></i> Name:
+            </label>
+            <input formControlName="username" type="text" class="form-control" readonly />
+          </div>
+
+          <!-- Institute (read-only) -->
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="fas fa-school me-1"></i> Institute:
+            </label>
+            <input formControlName="institute" type="text" class="form-control" readonly />
+          </div>
+
+          <!-- University (read-only) -->
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="fas fa-university me-1"></i> University:
+            </label>
+            <input formControlName="universityId" type="text" class="form-control" readonly />
+          </div>
+
+         
+
+          <!-- Submit -->
+          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || loading">
+            <span *ngIf="!loading"><i class="fas fa-save me-1"></i> Save</span>
+            <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <!-- Success/Error messages -->
+        <div *ngIf="success" class="alert alert-success mt-3">
+          <i class="fas fa-check-circle me-1"></i> Profile updated successfully.
+        </div>
+        <div *ngIf="error" class="alert alert-danger mt-3">
+          <i class="fas fa-exclamation-triangle me-1"></i> {{ error }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

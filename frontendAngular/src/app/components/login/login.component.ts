@@ -3,6 +3,7 @@ import { AuthSerivce } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,11 @@ export class LoginComponent {
 
   universityCredentials = {
     projectId: '',
+    username: '',
+    password: ''
+  };
+
+  professorCredentials = {
     username: '',
     password: ''
   };
@@ -61,25 +67,61 @@ export class LoginComponent {
 
   onUniversityLogin() {
     console.log('University admin login attempt:', this.universityCredentials);
-
-    this.authService.uniLogin(this.universityCredentials).subscribe((response)=>{
-      console.log(response)
-    })
+  
+    this.authService.uniLogin(this.universityCredentials).subscribe((response: any) => {
+      const universityId = response.university.id;
+      const universityName = response.university.name;
+  
+      // Save auth token and university ID for later use (e.g., saving later in plans page)
+      localStorage.setItem('TOKEN', response.TOKEN);
+      localStorage.setItem('universityId', universityId);
+      localStorage.setItem('universityName', universityName);
+  
+      // Step 1: Check if university already exists
+      this.authService.getUniById(universityId).subscribe({
+        next: (res: any) => {
+          // University already exists → go to dashboard
+          this.router.navigate(['/university/reports']);
+        },
+        error: (err) => {
+          if (err.status === 404) {
+            // University not found → redirect to plans page
+            this.router.navigate(['/university/plans']);
+          } else {
+            console.error('Unexpected error checking university:', err);
+          }
+        }
+      });
+    });
   }
 
 
 
 
+  // This is called when the user clicks the Login button
   onSubmit() {
-    const credentials = { username: this.username, password: this.password };
+    const credentials = { 
+      username: this.professorCredentials.username,
+      password: this.professorCredentials.password
+    };
+    // Send the credentials to the server using AuthService
     this.authService.login(credentials).subscribe(
       (response) => {
         console.log(response);
-        this.router.navigate(['/rev']);
+        if(response.status =='success'){
+          localStorage.setItem('token2', response.token);
+          this.router.navigate(['/prof/request']);
+        }
+        
       },
       (error) => {
-        console.error(error);
+        if (error.status === 401) {
+          alert(error.error.errorMessage);
+        } else {
+          console.error('Unexpected error:', error);
+        }
       }
     );
   }
+
 }

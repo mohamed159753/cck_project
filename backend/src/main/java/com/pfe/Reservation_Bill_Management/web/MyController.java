@@ -2,25 +2,25 @@ package com.pfe.Reservation_Bill_Management.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.pfe.Reservation_Bill_Management.entities.Professor;
 import com.pfe.Reservation_Bill_Management.entities.User;
+import com.pfe.Reservation_Bill_Management.security.JwtUtil;
 import com.pfe.Reservation_Bill_Management.services.user.LoginServiceUniversities;
+import com.pfe.Reservation_Bill_Management.services.user.ProfessorService;
 import com.pfe.Reservation_Bill_Management.services.user.RegisterService;
-
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/api")
@@ -31,12 +31,17 @@ public class MyController {
 	private final com.pfe.Reservation_Bill_Management.services.user.LoginService userService;
 	private final com.pfe.Reservation_Bill_Management.services.user.RegisterService userServiceRegister;
 	private final LoginServiceUniversities loginServiceUniversities;
+	private final ProfessorService professorService;
 	
 	@Autowired
-	public MyController(com.pfe.Reservation_Bill_Management.services.user.LoginService userService, RegisterService userServiceRegister, LoginServiceUniversities loginServiceUni ) {
+	private JwtUtil jwtUtil;
+	
+	@Autowired
+	public MyController(com.pfe.Reservation_Bill_Management.services.user.LoginService userService, RegisterService userServiceRegister, LoginServiceUniversities loginServiceUni,ProfessorService professorService ) {
 		this.userService = userService;
 		this.userServiceRegister = userServiceRegister;
 		this.loginServiceUniversities = loginServiceUni;
+		this.professorService = professorService;
 	}
 
 	
@@ -56,13 +61,24 @@ public class MyController {
         String password = credentials.get("password");
         
         if(userService.isValid(email, password)) {
-        	response.put("message", "Logged In successfully");
+        	
+        	Optional<Professor> prof = professorService.findProfByEmail(email);
+        	
+        	if (!prof.get().isActivated()) {
+            	return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        	}
+        	
+        	 String token = jwtUtil.generateToken(email,prof.get().getId());
+        	 response.put("token", token);
+        	 response.put("status", "success");
+        	 return ResponseEntity.ok(response);
         }
         else {
-            response.put("message", "login failed");
+        	response.put("status", "fail");
+        	response.put("errorMessage", "Invalid username or password");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 
         }
-        return ResponseEntity.ok(response);
     }
     
     @PostMapping("/register")
@@ -72,14 +88,32 @@ public class MyController {
         String username = credentials.get("username"); 
         String email = credentials.get("email");
         String password = credentials.get("password");
+        String cinString = credentials.get("cin");
+        int cin = Integer.parseInt(cinString);
+        String uni_id = credentials.get("projectId");
+        String institut = credentials.get("institut");
         
-        if(userServiceRegister.registerUser(username, email, password)) {
+
+
+        
+        if(userServiceRegister.registerUser(username,email,password,cin,uni_id,institut)) {
         	response.put("message", "User Registed Successfully from spring boot");
             return ResponseEntity.ok(response);
         }
         
         response.put("message", "User already exists");
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/activate/{token}")
+    public ResponseEntity<String> activateAccount(@PathVariable String token) {
+        boolean activated = userServiceRegister.activateUser(token);
+
+        if (!activated) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid activation link.");
+        }
+
+        return ResponseEntity.ok("Your account has been activated. You can now log in.");
     }
     
     

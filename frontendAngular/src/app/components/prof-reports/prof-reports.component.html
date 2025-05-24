@@ -1,0 +1,128 @@
+<div class="dashboard-container">
+    <app-prof-sidebar></app-prof-sidebar>
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Reports</h1>
+      </header>
+      
+      <div class="filters-section">
+        <div class="filter">
+          <label>Month: {{ getMonthName(selectedMonth) }}</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="selectedMonth" (change)="onMonthChange($event)">
+              <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
+        
+        <div class="filter">
+          <label>Year: {{ selectedYear }}</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="selectedYear" (change)="onYearChange($event)">
+              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="loading-indicator">
+        Loading...
+      </div>
+      
+      <!-- Error message -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+      
+      <!-- Metrics section -->
+<div *ngIf="!isLoading && !error" class="metrics-container">
+  <div class="card-header">
+    <h2><i class="fa-solid fa-server"></i> Resource Allocation</h2>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric-card disk">
+      <div class="metric-icon"><i class="fa-solid fa-hard-drive"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Total DSK Reserved</div>
+        <div class="metric-value">{{ reportData.totalDisk }}</div>
+      </div>
+    </div>
+    <div class="metric-card vcpu">
+      <div class="metric-icon"><i class="fa-solid fa-microchip"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Total vCPU Reserved</div>
+        <div class="metric-value">{{ reportData.totalVcpu }}</div>
+      </div>
+    </div>
+    <div class="metric-card vram">
+      <div class="metric-icon"><i class="fa-solid fa-memory"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Total vRAM Reserved</div>
+        <div class="metric-value">{{ reportData.totalVram }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && !error" class="metrics-container">
+  <div class="card-header">
+    <h2><i class="fa-solid fa-chart-pie"></i> Reservation Statistics</h2>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric-card total-reservations">
+      <div class="metric-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Number of Reservations</div>
+        <div class="metric-value">{{ reservationData.reservations }}</div>
+      </div>
+    </div>
+    <div class="metric-card approved">
+      <div class="metric-icon"><i class="fa-solid fa-check-circle"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Approved</div>
+        <div class="metric-value">{{ reservationData.approved }}</div>
+      </div>
+    </div>
+    <div class="metric-card pending">
+      <div class="metric-icon"><i class="fa-solid fa-clock"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Pending</div>
+        <div class="metric-value">{{ reservationData.pending }}</div>
+      </div>
+    </div>
+    <div class="metric-card refused">
+      <div class="metric-icon"><i class="fa-solid fa-times-circle"></i></div>
+      <div class="metric-content">
+        <div class="metric-title">Refused</div>
+        <div class="metric-value">{{ reservationData.canceled }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+  
+      <!-- Resource usage chart -->
+      <div *ngIf="!isLoading && !error && getImageUsageEntries().length > 0" class="chart-section">
+        <h2 class="section-title">Resource Usage by Image</h2>
+        
+        <div class="resource-usage">
+          <div *ngFor="let item of getImageUsageEntries()" class="resource-item">
+            <div class="resource-label">{{ item.name }}</div>
+            <div class="progress-container">
+              <div class="progress-bar" [style.width.%]="item.percentage"></div>
+            </div>
+            <div class="resource-percentage">{{ item.percentage }}%</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty state message when no image usage data -->
+      <div *ngIf="!isLoading && !error && getImageUsageEntries().length === 0" class="chart-section empty">
+        <h2 class="section-title">Resource Usage by Image</h2>
+        <p class="empty-message">No image usage data available for the selected period.</p>
+      </div>
+    </main>
+  </div>

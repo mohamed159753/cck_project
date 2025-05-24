@@ -1,54 +1,232 @@
-<div class="container mt-4">
-    <div class="row" *ngFor="let host of metrics | keyvalue">
-      <div class="col-md-6 mb-4">
-        <div class="card shadow border-0">
-          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-              <i class="bi bi-hdd-network me-2"></i> {{ host.key }}
-            </h5>
-            <span class="badge bg-info text-dark">Host Metrics</span>
+
+<app-prof-sidebar></app-prof-sidebar>
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>System Metrics Dashboard</h2>
+      <div class="controls d-flex align-items-center gap-2">
+        <!-- Toggle & Refresh Controls -->
+        <div class="btn-group btn-group-sm" role="group">
+          <button class="btn btn-outline-secondary" (click)="toggleAll(true)" title="Expand All">
+            <i class="bi bi-eye"></i><span class="d-none d-sm-inline ms-1">Expand</span>
+          </button>
+          <button class="btn btn-outline-secondary" (click)="toggleAll(false)" title="Collapse All">
+            <i class="bi bi-eye-slash"></i><span class="d-none d-sm-inline ms-1">Collapse</span>
+          </button>
+          <button class="btn btn-outline-primary" (click)="refreshNow()" title="Refresh Data">
+            <i class="bi bi-arrow-repeat me-1"></i><span class="d-none d-sm-inline">Refresh</span>
+            <span class="badge bg-primary ms-1">{{timeLeft}}s</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 small">Loading metrics data...</p>
+  </div>
+
+  <!-- Card View -->
+  <div *ngIf="!loading" class="row">
+   <!-- Modified card structure to keep summary metrics visible when collapsed -->
+<div class="col-md-6" *ngFor="let host of metricsArray">
+  <div class="card dashboard-card">
+    <!-- Card Header - Always visible -->
+    <div class="card-header d-flex justify-content-between align-items-center" 
+         [ngClass]="'bg-gradient-' + getStatusClass(host.value.cpu_usage)">
+      <h5 class="mb-0 d-flex align-items-center">
+        <i class="bi bi-hdd-network me-2"></i> {{host.key}}
+      </h5>
+      <div class="d-flex align-items-center">
+        <span class="status-indicator" [ngClass]="'bg-' + getStatusClass(host.value.cpu_usage)"></span>
+        <button class="btn btn-sm text-white toggle-btn" (click)="host.show = !host.show">
+          <i [ngClass]="host.show ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary Metrics - Always visible -->
+    <div class="card-body summary-section">
+      <!-- Summary Row -->
+      <div class="summary-metrics">
+        <div class="metric-item">
+          <div class="metric-title">CPU</div>
+          <div class="metric-value" [ngClass]="'text-' + getStatusClass(host.value.cpu_usage)">
+            {{host.value.cpu_usage}}%
           </div>
-  
-          <div class="card-body" *ngIf="$any(host.value) as value">
-            <!-- CPU Section -->
-            <div class="mb-3">
-              <h6><i class="bi bi-cpu me-2"></i>CPU Usage</h6>
-              <div class="progress">
-                <div class="progress-bar" role="progressbar"
-                  [ngClass]="{
-                    'bg-success': value.cpu_usage <= 50,
-                    'bg-warning': value.cpu_usage > 50 && value.cpu_usage <= 80,
-                    'bg-danger': value.cpu_usage > 80
-                  }"
-                  [style.width.%]="value.cpu_usage">
-                  
+          <div class="metric-chart">
+            <div class="sparkline">
+              <div *ngFor="let point of host.history.cpu" 
+                   class="sparkline-point" 
+                   [style.height.%]="point"
+                   [ngClass]="'bg-' + getStatusClass(point)">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-item">
+          <div class="metric-title">Memory</div>
+          <div class="metric-value" [ngClass]="'text-' + getStatusClass(host.value.memory_usage_percent)">
+            {{host.value.memory_usage_percent}}%
+          </div>
+          <div class="metric-chart">
+            <div class="sparkline">
+              <div *ngFor="let point of host.history.memory" 
+                   class="sparkline-point" 
+                   [style.height.%]="point"
+                   [ngClass]="'bg-' + getStatusClass(point)">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-item">
+          <div class="metric-title">Network In</div>
+          <div class="metric-value">
+            {{host.value.network?.recv_kbps ?? 0}} KB/s
+          </div>
+          <div class="metric-chart">
+            <div class="sparkline">
+              <div *ngFor="let point of host.history.network_recv" 
+                   class="sparkline-point bg-info" 
+                   [style.height.%]="point > 0 ? Math.min(point/10, 100) : 5">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-item">
+          <div class="metric-title">Network Out</div>
+          <div class="metric-value">
+            {{host.value.network?.sent_kbps ?? 0}} KB/s
+          </div>
+          <div class="metric-chart">
+            <div class="sparkline">
+              <div *ngFor="let point of host.history.network_sent" 
+                   class="sparkline-point bg-info" 
+                   [style.height.%]="point > 0 ? Math.min(point/10, 100) : 5">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Metrics - Expandable -->
+    <div class="card-body detailed-section" *ngIf="host.show">
+      <!-- Detailed Metrics -->
+      <div class="detailed-metrics">
+        <!-- CPU Section with Radial Progress -->
+        <div class="metric-section">
+          <h6 class="section-title"><i class="bi bi-cpu me-2"></i>CPU Usage</h6>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="progress-radial" [ngClass]="'progress-' + getStatusClass(host.value.cpu_usage)">
+              <div class="overlay">{{host.value.cpu_usage}}%</div>
+              <div class="progress-circle" [style.transform]="'rotate(' + (host.value.cpu_usage * 1.8) + 'deg)'"></div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <p class="mb-1 text-muted small">Current load: {{host.value.cpu_usage}}%</p>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar"
+                     [ngClass]="'bg-' + getStatusClass(host.value.cpu_usage)"
+                     [style.width.%]="host.value.cpu_usage">
                 </div>
               </div>
             </div>
-            {{ value.cpu_usage }}%
-  
-            <!-- Memory Section -->
-            <div class="mb-3">
-              <h6><i class="bi bi-memory me-2"></i>Memory</h6>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">Usage: {{ value.memory_usage_percent }}%</li>
-                <li class="list-group-item">Used: {{ value.memory_used_MB }} MB</li>
-                <li class="list-group-item">Available: {{ value.memory_available_MB }} MB</li>
-                <li class="list-group-item">Total: {{ value.memory_total_MB }} MB</li>
-              </ul>
+          </div>
+        </div>
+
+        <!-- Memory Section with Visual Bar -->
+        <div class="metric-section mt-4">
+          <h6 class="section-title"><i class="bi bi-memory me-2"></i>Memory</h6>
+          <div class="memory-visual mb-3">
+            <div class="memory-block used" [style.width.%]="host.value.memory_usage_percent"
+                 [ngClass]="'bg-' + getStatusClass(host.value.memory_usage_percent)">
+              <span>Used {{host.value.memory_used_MB}} MB</span>
             </div>
-  
-            <!-- Network Section -->
-            <div>
-              <h6><i class="bi bi-wifi me-2"></i>Network</h6>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">Sent: {{ value.network?.sent_kbps ?? 0 }} KB/s</li>
-                <li class="list-group-item">Received: {{ value.network?.recv_kbps ?? 0 }} KB/s</li>
-              </ul>
+            <div class="memory-block available" [style.width.%]="100 - host.value.memory_usage_percent">
+              <span>Available {{host.value.memory_available_MB}} MB</span>
+            </div>
+          </div>
+          <div class="memory-details">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <div class="stat-title">Total</div>
+                  <div class="stat-value">{{host.value.memory_total_MB}} MB</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <div class="stat-title">Used</div>
+                  <div class="stat-value" [ngClass]="'text-' + getStatusClass(host.value.memory_usage_percent)">
+                    {{host.value.memory_used_MB}} MB
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <div class="stat-title">Available</div>
+                  <div class="stat-value text-success">{{host.value.memory_available_MB}} MB</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Network Section with Multiple Indicators -->
+        <div class="metric-section mt-4">
+          <h6 class="section-title"><i class="bi bi-wifi me-2"></i>Network</h6>
+          <div class="network-metrics">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="network-card">
+                  <div class="network-direction">
+                    <i class="bi bi-arrow-down-circle"></i> Download
+                  </div>
+                  <div class="network-value">{{host.value.network?.recv_kbps ?? 0}} KB/s</div>
+                  <div class="network-chart">
+                    <div class="sparkline horizontal">
+                      <div *ngFor="let point of host.history.network_recv" 
+                           class="sparkline-point" 
+                           [style.height.%]="100"
+                           [style.width.%]="Math.min(point/5, 100)"
+                           class="bg-info">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="network-card">
+                  <div class="network-direction">
+                    <i class="bi bi-arrow-up-circle"></i> Upload
+                  </div>
+                  <div class="network-value">{{host.value.network?.sent_kbps ?? 0}} KB/s</div>
+                  <div class="network-chart">
+                    <div class="sparkline horizontal">
+                      <div *ngFor="let point of host.history.network_sent" 
+                           class="sparkline-point" 
+                           [style.height.%]="100"
+                           [style.width.%]="Math.min(point/5, 100)"
+                           class="bg-primary">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -9,6 +9,8 @@ export class ProfMetricsService {
   constructor(private http: HttpClient) {}
 
   getMetrics(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+    const token = localStorage.getItem("token2"); // or however you store it
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+    return this.http.get<any>(this.apiUrl, { headers });
   }
 }

@@ -1,0 +1,19 @@
+<div *ngIf="loading">Loading ECS resources...</div>
+
+<div *ngIf="!loading && activePaygEcs.length === 0">
+  <p>No active PAYG ECSs found.</p>
+</div>
+
+<div *ngIf="!loading && activePaygEcs.length > 0">
+  <div *ngFor="let ecs of activePaygEcs" class="ecs-card">
+    <h3>{{ ecs.type }}</h3>
+    <p><strong>vCPU:</strong> {{ ecs.vcpu }}</p>
+    <p><strong>RAM:</strong> {{ ecs.ram }} GB</p>
+    <p><strong>Storage:</strong> {{ ecs.storage }} GB</p>
+    <p><strong>Price:</strong> ${{ ecs.pricePerHour }} / hour</p>
+    <div *ngIf="ecs.externalId !== null && ecs.externalId !== undefined">
+        <button (click)="onStart(ecs)">Start</button>
+        <button (click)="onStop(ecs)">Stop</button>
+    </div>
+  </div>
+</div>

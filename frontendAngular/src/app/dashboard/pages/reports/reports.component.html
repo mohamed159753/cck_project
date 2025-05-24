@@ -1,0 +1,138 @@
+<!-- reports.component.html - Fixed template -->
+<div class="dashboard">
+    <app-sidebar></app-sidebar>
+    <main class="content">
+        <h2>Reports CCK</h2>
+        <p class="subtitle">Resource utilization and insights dashboard</p>
+        <hr>
+
+        <div class="filtre">
+            <select id="university" [(ngModel)]="selectedUniversity" (change)="onFilterChange()">
+                <option value="">Select University</option>
+                <option *ngFor="let uni of universities" [value]="uni">{{ uni }}</option>
+            </select>
+            <select id="resource" [(ngModel)]="selectedResource" (change)="onFilterChange()">
+                <option value="">Select Resource</option>
+                <option *ngFor="let res of resources" [value]="res">{{ res }}</option>
+            </select>
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="border: 4px solid rgba(52, 152, 219, 0.2); border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
+                Loading dashboard data...
+            </div>
+        </div>
+
+        <div class="grid-container" *ngIf="!loading">
+            <!-- Statistics Container -->
+            <div class="box dashboard-container">
+                <span><i class="fa-solid fa-chart-pie"></i> Statistics Overview</span>
+                <hr>
+                <div class="stats-container" *ngIf="getFilteredData() as data">
+                    <div class="stat-box reservation-total">
+                        <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Reservations</div>
+                            <div class="stat-value">{{ data.reservations }}</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box reservation-pending">
+                        <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value">{{ data.pending }}</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box reservation-approved">
+                        <div class="stat-icon"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-label">Approved</div>
+                            <div class="stat-value">{{ data.approved }}</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box quota-total">
+                        <div class="stat-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total {{ selectedResource }} Quota</div>
+                            <div class="stat-value">{{ data.totalQuota }}</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box quota-current">
+                        <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-label">Current {{ selectedResource }} Use</div>
+                            <div class="stat-value">{{ data.currentUse | number:'1.1-2' }}%</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box quota-remaining">
+                        <div class="stat-icon"><i class="fa-solid fa-battery-half"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-label">Remaining {{ selectedResource }}</div>
+                            <div class="stat-value">{{ data.toBeUsed | number:'1.1-2' }}%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert Section -->
+            <div class="box">
+                <span><i class="fa-solid fa-triangle-exclamation"></i> Usage Alerts</span>
+                <hr>
+                <div class="alert-bar" [ngClass]="alertColor" *ngIf="alertMessage">
+                    <i class="fa-solid fa-triangle-exclamation alert-icon"></i>
+                    <div class="alert-content">
+                        <strong>{{ alertMessage }}</strong>
+                        <div class="usage-progress">
+                            <div class="progress-track">
+                                <div class="progress-bar" 
+                                     [style.width.%]="getCurrentResourceUsePercentage()" 
+                                     [ngClass]="alertColor">
+                                </div>
+                            </div>
+                            <span class="progress-value">{{ getCurrentResourceUsePercentage() | number:'1.1-2' }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!alertMessage" style="padding: 20px; text-align: center; color: #7f8c8d;">
+                    No alerts at this time
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="box">
+                <span><i class="fa-solid fa-chart-column"></i> {{ selectedResource }} Usage Statistics</span>
+                <hr>
+                <div class="chart-container">
+                    <canvas #barChart></canvas>
+                </div>
+            </div>
+
+            <!-- Top Universities Section -->
+            <div class="box">
+                <span><i class="fa-solid fa-building-columns"></i> Top Universities ({{ selectedResource | uppercase }})</span>
+                <hr>
+                <div *ngIf="dashboardData?.topUniversities?.length > 0">
+                    <div *ngFor="let uni of dashboardData.topUniversities; let i = index" class="university-card">
+                        <div class="rank-badge">#{{ i + 1 }}</div>
+                        <div class="uni-info">
+                            <div class="uni-name">{{ uni.name }}</div>
+                            <div class="usage-bar">
+                                <div class="filled" [style.width.%]="getResourceUsageForUniversity(uni)"></div>
+                            </div>
+                        </div>
+                        <div class="usage-value">{{ getResourceUsageForUniversity(uni) | number:'1.1-2' }}%</div>
+                    </div>
+                </div>
+                <div *ngIf="!dashboardData?.topUniversities?.length">
+                    No university data available for {{ selectedResource }}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

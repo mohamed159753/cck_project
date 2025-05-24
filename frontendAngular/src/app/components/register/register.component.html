@@ -11,17 +11,48 @@
     <div class="auth-box">
       <h2>Register</h2>
       <form  (ngSubmit)="onSubmit()" #registerForm="ngForm">
+
+        <div class="input-group">
+          <label for="university-project">University</label>
+          
+          <select class="form-select form-select-sm" id="university-project" 
+                  [(ngModel)]="ProfessorCredentials.projectId" 
+                  name="universityProject" required
+                  [disabled]="isLoadingProjects">
+            <option value="" disabled selected>Select your university</option>
+            <option *ngFor="let project of projects" [value]="project.id">
+              
+              {{ project.universityName }}
+              
+            </option>
+          </select>
+          <div *ngIf="isLoadingProjects" class="loading-text">
+            Loading universities...
+          </div>
+        </div>
+
+
+        <div class="input-group">
+          <label for="institut">Institut</label>
+          <input type="text" id="institut" name="institut" [(ngModel)]="ProfessorCredentials.institut" placeholder="Enter your institute" required>
+        </div>
+
+
         <div class="input-group">
           <label for="username">Username</label>
-          <input type="text" id="username" name="username" [(ngModel)]="username" placeholder="Enter your username" required>
+          <input type="text" id="username" name="username" [(ngModel)]="ProfessorCredentials.username" placeholder="Enter your username" required>
         </div>
         <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Enter your email" required>
+          <input type="email" id="email" name="email" [(ngModel)]="ProfessorCredentials.email" placeholder="Enter your email" required>
+        </div>
+        <div class="input-group">
+          <label for="institut">CIN</label>
+          <input type="text" id="cin" name="cin" [(ngModel)]="ProfessorCredentials.cin" placeholder="Enter your institute" required>
         </div>
         <div class="input-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="Enter your password" required>
+          <input type="password" id="password" name="password" [(ngModel)]="ProfessorCredentials.password" placeholder="Enter your password" required>
         </div>
         <button type="submit">Register</button>
       </form>

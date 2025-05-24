@@ -1,0 +1,188 @@
+/* Dashboard Layout */
+.dashboard-container {
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Main Content Styles */
+.main-content {
+  padding: 1.5rem;
+  margin-left: 275px;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.content-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.action-button {
+  background-color: #0090B5;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Filters Section */
+.filters-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  margin-top: 40px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.select-wrapper, .date-input-wrapper {
+  position: relative;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.select-wrapper select, .date-input-wrapper input {
+  appearance: none;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: none;
+  background-color: transparent;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+.date-input-wrapper input[type="date"] {
+  min-width: 150px;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.5rem;
+  color: #4b5563;
+  pointer-events: none;
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: row !important;
+  gap: 0.5rem;
+}
+
+.filter-button {
+  margin-right: 0.5rem;
+}
+
+.reset-button {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  background-color: #e5e7eb;
+}
+
+/* Table Styles */
+.table-container {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  background-color: #d1e7dd;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.data-table tr.even {
+  background-color: #eff6ff;
+}
+
+.data-table tr.odd {
+  background-color: white;
+}
+
+.status {
+  font-weight: 500;
+}
+
+.status.pending {
+  color: #b45309;
+}
+
+.status.in-progress {
+  color: #1d4ed8;
+}
+
+.status.completed {
+  color: #047857;
+}
+
+.status.failed {
+  color: #b91c1c;
+}
+
+.status-arrow {
+  font-size: 0.5rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters-section {
+    flex-direction: column;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}

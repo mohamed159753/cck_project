@@ -1,0 +1,159 @@
+<div class="container my-4 admin-billing-container">
+  <h2>Billing Management</h2>
+
+  <!-- Summary Cards -->
+  <div class="row text-center mb-4 summary-cards">
+    <div class="col-md-3 mb-3">
+      <div class="card bg-light">
+        <div class="card-body">
+          <div class="summary-value h4">{{ summaryData.totalAmount | currency }}</div>
+          <div class="summary-label">Total Billing</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <div class="summary-value h4">{{ summaryData.paidAmount | currency }}</div>
+          <div class="summary-label">Paid</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card bg-warning text-dark">
+        <div class="card-body">
+          <div class="summary-value h4">{{ summaryData.pendingAmount | currency }}</div>
+          <div class="summary-label">Pending</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card bg-danger text-white">
+        <div class="card-body">
+          <div class="summary-value h4">{{ summaryData.overdueAmount | currency }}</div>
+          <div class="summary-label">Overdue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Actions -->
+  <div class="row align-items-end mb-4 filter-toolbar">
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Filter by Month</label>
+      <select class="form-select" [formControl]="monthControl">
+        <option value="">All Months</option>
+        <option *ngFor="let month of availableMonths" [value]="month.value">
+          {{ month.viewValue }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Filter by University</label>
+      <select class="form-select" [formControl]="universityControl">
+        <option value="">All Universities</option>
+        <option *ngFor="let uni of universities" [value]="uni.universityId">
+          {{ uni.universityName }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-2 mb-3">
+      <button class="btn btn-outline-primary w-100" (click)="resetFilters()">
+        <i class="bi bi-arrow-clockwise"></i> Reset Filters
+      </button>
+    </div>
+
+    <div class="col-md-2 mb-3">
+      <button class="btn btn-primary w-100" (click)="exportToCSV()">
+        <i class="bi bi-download"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger d-flex justify-content-between align-items-center">
+    {{ error }}
+    <button class="btn btn-sm btn-outline-primary" (click)="loadAllInvoices()">Try Again</button>
+  </div>
+
+  <!-- Invoices Table -->
+  <div *ngIf="!loading && !error" class="table-responsive table-container shadow p-3 bg-white rounded">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>University</th>
+          <th>Month</th>
+          <th>Fixed Cost</th>
+          <th>PAYG</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let invoice of dataSource">
+          <td>{{ invoice.university?.universityName }}</td>
+          <td>{{ invoice.month | date: 'MMMM yyyy' }}</td>
+          <td>{{ invoice.fixedAmount | currency }}</td>
+          <td>{{ invoice.paygTotal | currency }}</td>
+          <td><strong>{{ invoice.totalAmount | currency }}</strong></td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-success': invoice.status === 'PAID',
+              'bg-warning text-dark': invoice.status === 'PENDING',
+              'bg-danger': invoice.status === 'OVERDUE'
+            }">
+              {{ invoice.status }}
+            </span>
+          </td>
+          <td>{{ invoice.issueDate | date: 'mediumDate' }}</td>
+          <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
+          <td>
+            <div class="btn-group" role="group">
+              <button class="btn btn-sm btn-outline-info" title="View Details" (click)="viewInvoiceDetails(invoice)">
+                <i class="bi bi-eye"></i>
+              </button>
+              <div class="btn-group" dropdown>
+                <button
+                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" (click)="updateInvoiceStatus(invoice, 'PAID')">Mark as Paid</a></li>
+                  <li><a class="dropdown-item" (click)="updateInvoiceStatus(invoice, 'PENDING')">Mark as Pending</a></li>
+                  <li><a class="dropdown-item" (click)="updateInvoiceStatus(invoice, 'OVERDUE')">Mark as Overdue</a></li>
+                </ul>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Simple Pagination (Example) -->
+    <nav *ngIf="dataSource.length > pageSize">
+      <ul class="pagination justify-content-end">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
+        </li>
+        <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="page === currentPage">
+          <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

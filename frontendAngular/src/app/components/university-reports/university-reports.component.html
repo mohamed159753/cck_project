@@ -1,0 +1,176 @@
+<div class="layout">
+  <app-university-sidebar></app-university-sidebar>
+
+  <div class="dashboard-container">
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+
+    <!-- Dashboard Content -->
+    <ng-container *ngIf="!isLoading && !loadError">
+      <div class="header">
+        <h1>Reports for {{ data.universityName }}</h1>
+        <p class="subtitle">Resource utilization and insights dashboard</p>
+      </div>
+      <hr />
+
+      <!-- Filters -->
+      <div class="filters-container">
+        <div class="filters">
+          <div class="filter-group">
+            <label for="resourceType">Resource Type:</label>
+            <select id="resourceType" [(ngModel)]="selectedResource" (change)="onResourceTypeChange($event)">
+              <option value="vcpu">CPU</option>
+              <option value="ram">RAM</option>
+              <option value="storage">Storage</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="month">Month:</label>
+            <select id="month" [(ngModel)]="selectedMonth" (change)="onMonthChange($event)">
+              <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
+            </select>
+            <label for="year">Year:</label>
+            <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange($event)">
+              <option *ngFor="let y of years" [value]="y.value">{{ y.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Stats -->
+      <div class="dashboard-grid">
+        <!-- Statistics Section -->
+        <div class="card statistics-section">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-chart-pie"></i> Statistics</h2>
+          </div>
+          <div class="month-stats-grid">
+            <div class="stat-card reservation-total">
+              <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+              <div class="stat-content">
+                <div class="stat-label">Reservations</div>
+                <div class="stat-value">{{ reservationsData.total }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card reservation-pending">
+              <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+              <div class="stat-content">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value">{{ reservationsData.pending }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card reservation-approved">
+              <div class="stat-icon"><i class="fa-solid fa-check-circle"></i></div>
+              <div class="stat-content">
+                <div class="stat-label">Approved</div>
+                <div class="stat-value">{{ reservationsData.approved }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card quota-total">
+              <div class="stat-icon"><i class="fa-solid fa-database"></i></div>
+              <div class="stat-content">
+                <div class="stat-label">Total Quota</div>
+                <div class="stat-value">{{ quotaData.total }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card quota-current">
+              <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
+              <div class="stat-content">
+                <div class="stat-label">Current Use</div>
+                <div class="stat-value">{{ quotaData.current }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card quota-remaining">
+              <div class="stat-icon"><i class="fa-solid fa-battery-half"></i></div>
+              <div class="stat-content">
+                <div class="stat-label">Remaining</div>
+                <div class="stat-value">{{ quotaData.remaining }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert Section -->
+        <div class="card alert-section">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-bell"></i> Usage Alert</h2>
+          </div>
+          <div class="alert-container">
+            <div class="alert" [ngClass]='usageColor'>
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <div class="alert-content">
+                <strong>{{ usageMessage }}</strong>
+                <div class="usage-progress">
+                  <div class="progress-track">
+                    <div class="progress-bar" [style.width.%]="currentUsage" [ngClass]='usageColor'></div>
+                  </div>
+                  <span class="progress-value">{{ currentUsage }}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Chart Section - Moved above Top Institutes -->
+        <div class="card chart-section">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-chart-column"></i> {{ selectedResource.toUpperCase() }} Usage Over Months</h2>
+          </div>
+          <div class="chart-container">
+            <canvas #barChart></canvas>
+          </div>
+        </div>
+
+        <!-- Top Institutes Section - Now below Chart Section -->
+        <div class="card top-institutes-section">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-building-columns"></i> Top Institutes ({{ months[selectedMonth-1].name }} {{ selectedYear }})</h2>
+          </div>
+          <div class="top-institutes-container">
+            <div *ngIf="!topData || topData.length === 0" class="no-data-message">
+              <i class="fa-solid fa-info-circle"></i> No institute data available for the selected period.
+            </div>
+            
+            <table *ngIf="topData && topData.length > 0" class="institutes-table">
+              <thead>
+                <tr>
+                  <th>Institute Name</th>
+                  <th>VCPU Usage</th>
+                  <th>RAM Usage</th>
+                  <th>Storage Usage</th>
+                  <th>Usage %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let institute of topData; let i = index">
+                  <td><span class="institute-name">{{ institute.instituteName }}</span></td>
+                  <td>{{ institute.vcpu }} cores</td>
+                  <td>{{ institute.ram }} GB</td>
+                  <td>{{ institute.storage }} GB</td>
+                  <td>{{ institute.percentage }} %</td>
+                  <td>
+                   
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="loadError" class="error-message">
+      <i class="fa-solid fa-exclamation-circle"></i>
+      Failed to load dashboard data. Please try again later.
+    </div>
+  </div>
+</div>

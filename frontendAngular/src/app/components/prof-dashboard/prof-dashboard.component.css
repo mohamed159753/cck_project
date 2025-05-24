@@ -1,20 +1,409 @@
-body {
-    background-color: #f8f9fa;
+.dashboard-container {
+  padding: 0.75rem;
+  max-width: 1400px;
+  margin-left: 350px;
+}
+
+.dashboard-header {
+  padding: 0.5rem 0;
+  margin-bottom: 0.75rem !important;
+}
+
+.dashboard-header h2 {
+  font-size: 1.25rem;
+}
+
+.controls .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.dashboard-card {
+  transition: all 0.2s ease;
+  border: none;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+/* Card header styles */
+.card-header {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.card-header h5 {
+  font-size: 0.95rem;
+}
+
+.bg-gradient-success {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(45deg, #ffc107, #fd7e14);
+  color: white;
+}
+
+.bg-gradient-danger {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  font-size: 0.85rem;
+}
+
+/* Card body */
+.card-body {
+  padding: 0.75rem;
+}
+
+/* Summary metrics row */
+.summary-metrics {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.metric-item {
+  flex: 1;
+  min-width: 60px;
+  text-align: center;
+  padding: 0.35rem;
+  border-radius: 3px;
+  background-color: rgba(0,0,0,0.02);
+}
+
+.metric-title {
+  font-size: 0.7rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.metric-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+/* Sparkline charts */
+.sparkline {
+  height: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1px;
+}
+
+.sparkline.horizontal {
+  height: 6px;
+  align-items: center;
+}
+
+.sparkline-point {
+  flex: 1;
+  min-width: 2px;
+  border-radius: 1px;
+  background-color: #ced4da;
+}
+
+/* Detailed metrics styling */
+.detailed-metrics {
+  margin-top: 0.75rem;
+}
+
+.metric-section {
+  padding: 0.75rem;
+  border-radius: 3px;
+  background-color: rgba(0,0,0,0.02);
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  color: #495057;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Progress radial styling */
+.progress-radial {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.progress-success {
+  background: conic-gradient(#28a745 0%, #e9ecef 0%);
+}
+
+.progress-warning {
+  background: conic-gradient(#ffc107 0%, #e9ecef 0%);
+}
+
+.progress-danger {
+  background: conic-gradient(#dc3545 0%, #e9ecef 0%);
+}
+
+.progress-circle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  clip: rect(0, 60px, 60px, 30px);
+  transform-origin: center;
+}
+
+.overlay {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+  z-index: 2;
+}
+
+/* Memory visual */
+.memory-visual {
+  display: flex;
+  height: 22px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.memory-block {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 6px;
+}
+
+.memory-block.used {
+  min-width: 60px;
+  color: white;
+}
+
+.memory-block.available {
+  background-color: #e9ecef;
+  color: #495057;
+  min-width: 60px;
+}
+
+/* Memory stats cards */
+.memory-details {
+  margin-top: 0.75rem;
+}
+
+.stat-card {
+  padding: 0.4rem;
+  border-radius: 3px;
+  background-color: rgba(0,0,0,0.03);
+  text-align: center;
+}
+
+.stat-title {
+  font-size: 0.7rem;
+  color: #6c757d;
+  margin-bottom: 0.15rem;
+}
+
+.stat-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Network section */
+.network-metrics .row {
+  margin-left: -0.35rem;
+  margin-right: -0.35rem;
+}
+
+.network-metrics .col-md-6 {
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+}
+
+.network-card {
+  padding: 0.5rem;
+  border-radius: 3px;
+  background-color: rgba(0,0,0,0.03);
+  margin-bottom: 0.5rem;
+}
+
+.network-direction {
+  font-size: 0.7rem;
+  color: #6c757d;
+  margin-bottom: 0.2rem;
+}
+
+.network-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 992px) {
+  .col-md-6 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   
-  .card {
-    border-radius: 1rem;
+  .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-header .d-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
   }
   
-  .card-header {
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
+  .controls {
+    margin-top: 0.5rem;
+    width: 100%;
   }
   
-  h6 {
-    font-weight: bold;
-    margin-top: 10px;
+  .btn-group {
+    width: 100%;
+    justify-content: space-between;
   }
   
+  .btn-group .btn {
+    flex: 1;
+  }
+}
+
+/* Utility classes for status colors */
+.bg-success, .text-success {
+  background-color: #28a745;
+  color: #28a745;
+}
+
+.bg-warning, .text-warning {
+  background-color: #ffc107;
+  color: #ffc107;
+}
+
+.bg-danger, .text-danger {
+  background-color: #dc3545;
+  color: #dc3545;
+}
+
+.bg-info, .text-info {
+  background-color: #17a2b8;
+  color: #17a2b8;
+}
+
+/* Fix text color for text-* classes */
+.text-success {
+  background-color: transparent;
+}
+
+.text-warning {
+  background-color: transparent;
+}
+
+.text-danger {
+  background-color: transparent;
+}
+
+.text-info {
+  background-color: transparent;
+}
+
+.summary-section {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.detailed-section {
+  padding-top: 0.75rem;
+}
+
+/* Add visual separator between summary and detailed sections */
+.card-body + .card-body {
+  padding-top: 0;
+}
+
+/* Adjust the card bottom margins */
+.dashboard-card {
+  margin-bottom: 0.75rem;
+}
+
+/* Make the collapse/expand button more noticeable */
+.toggle-btn {
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.toggle-btn:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+/* Make card headers clickable only for the button */
+.card-header {
+  cursor: default;
+}
+
+/* Visual indicator for collapsed/expanded state */
+.dashboard-card.collapsed .card-header {
+  border-bottom: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .summary-metrics {
+    flex-wrap: wrap;
+  }
   
-  
+  .metric-item {
+    min-width: calc(50% - 4px);
+    margin-bottom: 4px;
+  }
+}
+

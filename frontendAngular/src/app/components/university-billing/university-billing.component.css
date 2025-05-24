@@ -1,0 +1,77 @@
+.university-billing-container {
+  padding: 20px;
+  margin-left: 250px;
+  
+  h2 {
+    margin-bottom: 24px;
+    color: #333;
+  }
+  
+  .filter-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    
+    mat-form-field {
+      min-width: 200px;
+    }
+  }
+  
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+  }
+  
+  .error-message {
+    background-color: #fff6f6;
+    border-left: 4px solid #d32f2f;
+    padding: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .no-data {
+    text-align: center;
+    padding: 40px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    color: #666;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    
+    .invoice-table {
+      width: 100%;
+      
+      .total-column {
+        color: #1976d2;
+      }
+      
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        
+        &.paid {
+          background-color: #e8f5e9;
+          color: #2e7d32;
+        }
+        
+        &.pending {
+          background-color: #fff8e1;
+          color: #f57c00;
+        }
+        
+        &.overdue {
+          background-color: #ffebee;
+          color: #c62828;
+        }
+      }
+    }
+  }
+}

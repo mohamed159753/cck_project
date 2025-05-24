@@ -1,0 +1,72 @@
+<app-prof-sidebar></app-prof-sidebar>
+
+<div class="dashboard-container">
+  <main class="main-content">
+    <header class="content-header">
+      <h1>Reservations</h1>
+
+    </header>
+    <hr>
+
+    <div class="filters-section">
+      <div class="filter">
+        <label>From</label>
+        <div class="date-input-wrapper">
+          <input 
+            type="date" 
+            id="startDate" 
+            [(ngModel)]="startDate" 
+            name="startDate">
+        </div>
+      </div>
+      
+      <div class="filter">
+        <label>To</label>
+        <div class="date-input-wrapper">
+          <input 
+            type="date" 
+            id="endDate" 
+            [(ngModel)]="endDate" 
+            name="endDate">
+        </div>
+      </div>
+      
+      <div class="filter filter-actions">
+        <button class="action-button filter-button" (click)="filterByDate()">Apply Filter</button>
+        <button class="reset-button" (click)="resetFilters()">Reset</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Resource Type</th>
+            <th>vCPU</th>
+            <th>vRAM</th>
+            <th>Disk Size</th>
+            <th>Image</th>
+            <th>Last Used</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr 
+            *ngFor="let res of filteredReservations; let i = index" 
+            [ngClass]="i % 2 === 0 ? 'even' : 'odd'"
+          >
+            <td>{{ res.resource?.type || 'N/A' }}</td>
+            <td>{{ res.resource?.vcpu || 'N/A' }}</td>
+            <td>{{ formatRam(res.resource?.ram) }}</td>
+            <td>{{ res.resource?.storage ? res.resource.storage + 'GB' : 'N/A' }}</td>
+            <td>{{ res.resource?.image || 'N/A' }}</td>
+            <td>{{ formatDate(res.startTime) }}</td>
+            <td>
+              <span class="status {{ res.status.toLowerCase() }}">{{ res.status }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

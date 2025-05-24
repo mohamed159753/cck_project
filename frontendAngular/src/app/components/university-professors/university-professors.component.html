@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Manage Professors</h2>
+
+  <app-university-sidebar></app-university-sidebar>
+  <!-- New / Edit Professor Form -->
+  <div class="card p-3 mb-4">
+    <h5 *ngIf="!editingProfessorId">Add New Professor</h5>
+    <h5 *ngIf="editingProfessorId">Edit Professor</h5>
+    <div class="row g-2">
+      <div class="col-md-3">
+        <input class="form-control" placeholder="Username" [(ngModel)]="newProfessor.username">
+      </div>
+      <div class="col-md-3">
+        <input class="form-control" placeholder="Email" [(ngModel)]="newProfessor.email">
+      </div>
+      <div class="col-md-3">
+        <input class="form-control" placeholder="Institute" [(ngModel)]="newProfessor.institute">
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button class="btn btn-success" (click)="editingProfessorId ? updateProfessor(newProfessor) : createProfessor()">
+          {{ editingProfessorId ? 'Update' : 'Create' }}
+        </button>
+        <button *ngIf="editingProfessorId" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Professors Table -->
+  <table class="table table-bordered table-striped">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Institute</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let prof of professors">
+        <td>{{ prof.id }}</td>
+        <td>{{ prof.username }}</td>
+        <td>{{ prof.email }}</td>
+        <td>{{ prof.institute }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-1" (click)="editProfessor(prof)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteProfessor(prof.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,77 @@
+
+<app-university-sidebar></app-university-sidebar>
+<div class="university-billing-container">
+  <h2>Your Billing History</h2>
+
+  <!-- Filter by Month -->
+  <div class="filter-container mb-3">
+    <label for="monthSelect"><strong>Filter by Month:</strong></label>
+    <select id="monthSelect" class="form-control" [formControl]="monthControl">
+      <option value="">All Months</option>
+      <option *ngFor="let month of availableMonths" [value]="month.value">
+        {{ month.viewValue }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+    <button class="btn btn-outline-primary btn-sm ms-3" (click)="loadInvoices()">Try Again</button>
+  </div>
+
+  <!-- No Data Message -->
+  <div *ngIf="!loading && !error && filteredInvoices.length === 0" class="alert alert-info">
+    No invoices found for the selected criteria.
+  </div>
+
+  <!-- Invoices Table -->
+  <div *ngIf="!loading && filteredInvoices.length > 0" class="table-responsive mt-3">
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Month</th>
+          <th>Fixed Cost</th>
+          <th>Pay-As-You-Go</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Due Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let invoice of filteredInvoices">
+          <td>{{ invoice.month | date: 'MMMM yyyy' }}</td>
+          <td>{{ invoice.fixedAmount  }}DT</td>
+          <td>{{ invoice.paygTotal }} DT</td>
+          <td><strong>{{ invoice.totalAmount }} DT</strong></td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-success': invoice.status.toLowerCase() === 'paid',
+              'bg-warning': invoice.status.toLowerCase() === 'pending',
+              'bg-danger': invoice.status.toLowerCase() === 'overdue'
+            }">
+              {{ invoice.status }}
+            </span>
+          </td>
+          <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-info me-2" title="View Details" (click)="viewInvoiceDetails(invoice)">
+              👁
+            </button>
+            <button class="btn btn-sm btn-outline-success" title="Download" (click)="downloadInvoice(invoice)">
+              ⬇️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

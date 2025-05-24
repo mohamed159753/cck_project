@@ -1,0 +1,210 @@
+<!-- Main container with responsive layout -->
+<div class="container-fluid">
+  <div class="row g-0">
+    
+    <!-- Sidebar -->
+    <div class="col-auto sidebar-container">
+      <app-sidebar></app-sidebar>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col main-content px-4 py-4">
+      <h1 class="fw-bold mb-3">CCK Resource Reservation Management</h1>
+      <hr class="mb-4">
+
+      <div class="mb-3">
+        <select class="form-select form-select-sm w-auto">
+                [(ngModel)]="selectedFilter"
+                (change)="applyFilter(selectedFilter)">
+            <option value="all">All</option>
+            <option value="university-approved">University Approved</option>
+            <option value="pending">Pending CCK</option>
+            <option value="approved">CCK Approved</option>
+            <option value="rejected">CCK Rejected</option>
+        </select>
+       </div>
+
+       <!-- Filter Buttons -->
+       
+       <!-- <div class="d-flex flex-wrap gap-2 mb-3">
+        <button class="btn btn-sm"
+            [ngClass]="selectedFilter === 'all' ? 'btn-primary' : 'btn-outline-primary'"
+            (click)="applyFilter('all')">
+            All
+        </button>
+        <button class="btn btn-sm"
+            [ngClass]="selectedFilter === 'university-approved' ? 'btn-primary' : 'btn-outline-primary'"
+            (click)="applyFilter('university-approved')">
+            University Approved
+        </button>
+        <button class="btn btn-sm"
+            [ngClass]="selectedFilter === 'pending' ? 'btn-primary' : 'btn-outline-primary'"
+            (click)="applyFilter('pending')">
+            Pending CCK
+        </button>
+        <button class="btn btn-sm"
+            [ngClass]="selectedFilter === 'approved' ? 'btn-primary' : 'btn-outline-primary'"
+            (click)="applyFilter('approved')">
+            CCK Approved
+        </button>
+        <button class="btn btn-sm"
+            [ngClass]="selectedFilter === 'rejected' ? 'btn-primary' : 'btn-outline-primary'"
+            (click)="applyFilter('rejected')">
+            CCK Rejected
+        </button>
+        </div> -->
+
+      <!-- Reservation Table -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>University</th>
+                  <th>Professor</th>
+                  <th>Resource</th>
+                  <th>Duration</th>
+                  <th>Status</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let reservation of filteredReservations">
+                  <tr>
+                    <td>#{{ reservation.id }}</td>
+                    <td>{{ reservation.university.name }}</td>
+                    <td>{{ reservation.professor.username }}</td>
+                    <td>{{ reservation.resource.type }}</td>
+                    <td>{{ calculateDuration(reservation.startTime, reservation.endTime) }}</td>
+                    <td>
+                      <span class="badge rounded-pill"
+                        [ngClass]="getStatusClass(reservation.status)">
+                        {{ reservation.status }}
+                      </span>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-info"
+                        (click)="toggleDetails(reservation.id)">
+                        <i class="fa"
+                          [ngClass]="expandedReservationId === reservation.id ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Expanded Row -->
+                  <tr *ngIf="expandedReservationId === reservation.id">
+                    <td colspan="7">
+                      <div class="p-3 bg-light rounded shadow-sm">
+                        <div class="row g-3">
+                          
+                          <!-- Requestor Card -->
+                          <div class="col-md-4">
+                            <div class="card h-100 border-info">
+                              <div class="card-header bg-info text-white">
+                                Requestor Details
+                              </div>
+                              <div class="card-body">
+                                <h6>Professor</h6>
+                                <p><strong>Name:</strong> {{ reservation.professor.username }}</p>
+                                <p><strong>CIN:</strong> {{ reservation.professor.cin }}</p>
+                                <p><strong>Institute:</strong> {{ reservation.professor.institute }}</p>
+                                <p><strong>Email:</strong> {{ reservation.professor.email || 'N/A' }}</p>
+                                <hr>
+                                <h6>University</h6>
+                                <p><strong>Name:</strong> {{ reservation.university.name }}</p>
+                                <p><strong>ID:</strong> {{ reservation.university.id }}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Reservation Details Card -->
+                          <div class="col-md-4">
+                            <div class="card h-100 border-primary">
+                              <div class="card-header bg-primary text-white">
+                                Reservation Details
+                              </div>
+                              <div class="card-body">
+                                <p><strong>Start:</strong> {{ formatDate(reservation.startTime) }}</p>
+                                <p><strong>End:</strong> {{ formatDate(reservation.endTime) }}</p>
+                                <p><strong>Duration:</strong> {{ calculateDuration(reservation.startTime, reservation.endTime) }}</p>
+                                <p>
+                                  <strong>Status:</strong>
+                                  <span class="badge rounded-pill" [ngClass]="getStatusClass(reservation.status)">
+                                    {{ reservation.status }}
+                                  </span>
+                                </p>
+                                <p><strong>Estimated Cost:</strong> {{ calculateEstimatedCost(reservation) | currency }}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Resource Details Card -->
+                          <div class="col-md-4">
+                            <div class="card h-100 border-success">
+                              <div class="card-header bg-success text-white">
+                                Resource Details
+                              </div>
+                              <div class="card-body">
+                                <p><strong>Type:</strong> {{ reservation.resource.type }}</p>
+                                <p><strong>vCPU:</strong> {{ reservation.resource.vcpu }} cores</p>
+                                <p><strong>RAM:</strong> {{ reservation.resource.ram }} MB</p>
+                                <p><strong>Storage:</strong> {{ reservation.resource.storage }} GB</p>
+                                <p><strong>Image:</strong> {{ reservation.resource.image }}</p>
+                                <p><strong>Price/Hour:</strong> {{ reservation.resource.pricePerHour | currency }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="text-center mt-4"
+                          *ngIf="reservation.status === approvalStatus.APPROVED_UNIVERSITY || reservation.status === approvalStatus.PENDING_CCK">
+                          <button class="btn btn-success me-2"
+                            (click)="approveReservation(reservation)">
+                            <i class="fa fa-check me-1"></i> Approve Resource Allocation
+                          </button>
+                          <button class="btn btn-danger"
+                            (click)="rejectReservation(reservation)">
+                            <i class="fa fa-times me-1"></i> Reject Request
+                          </button>
+                        </div>
+
+                        <!-- Already Processed -->
+                        <div class="text-center mt-3"
+                          *ngIf="reservation.status === approvalStatus.APPROVED_CCK || reservation.status === approvalStatus.REJECTED_CCK">
+                          <div class="alert"
+                            [ngClass]="{
+                              'alert-success': reservation.status === approvalStatus.APPROVED_CCK,
+                              'alert-danger': reservation.status === approvalStatus.REJECTED_CCK
+                            }">
+                            <i class="fa"
+                              [ngClass]="{
+                                'fa-check-circle': reservation.status === approvalStatus.APPROVED_CCK,
+                                'fa-times-circle': reservation.status === approvalStatus.REJECTED_CCK
+                              }"></i>
+                            <strong class="ms-2">{{ reservation.status === approvalStatus.APPROVED_CCK ? 'Approved' : 'Rejected' }} by CCK</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+
+            <!-- No Data Message -->
+            <div *ngIf="filteredReservations.length === 0" class="text-center py-4">
+              <div class="alert alert-info">
+                <i class="fa fa-info-circle me-2"></i>
+                No reservation requests found matching the selected filter.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
