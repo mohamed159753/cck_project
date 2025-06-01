@@ -45,6 +45,7 @@ export class ManageReservationsComponent implements OnInit {
   reservations: Reservation[] = [];
   expandedReservationId: number | null = null;
   approvalStatus = ApprovalStatus; // Make the enum available in the template
+  adminId = localStorage.getItem("adminId")
 
   constructor(
     private manageReservations: UniversityManageReservationsService,
@@ -77,6 +78,7 @@ export class ManageReservationsComponent implements OnInit {
     this.manageReservations.getReservations(universityId).subscribe(
       data => {
         this.reservations = data;
+        console.log(this.reservations)
       },
       error => console.error('Error loading reservations:', error)
     );
@@ -101,9 +103,8 @@ export class ManageReservationsComponent implements OnInit {
     reservation.status = 'Processing...';
 
     console.log(`Approving reservation ${reservation.id} with status ${ApprovalStatus.APPROVED_UNIVERSITY}`);
-    
     // Send the correct enum value as expected by the backend
-    this.manageReservations.updateReservationStatus(reservation.id, ApprovalStatus.APPROVED_UNIVERSITY).subscribe(
+    this.manageReservations.updateReservationStatus(reservation.id, ApprovalStatus.APPROVED_UNIVERSITY,this.adminId).subscribe(
       (response) => {
         console.log('Approval response:', response);
         reservation.status = ApprovalStatus.APPROVED_UNIVERSITY;
@@ -134,7 +135,7 @@ export class ManageReservationsComponent implements OnInit {
     console.log(`Declining reservation ${reservation.id} with status ${ApprovalStatus.REJECTED_UNIVERSITY}`);
     
     // Send the correct enum value as expected by the backend
-    this.manageReservations.updateReservationStatus(reservation.id, ApprovalStatus.REJECTED_UNIVERSITY).subscribe(
+    this.manageReservations.updateReservationStatus(reservation.id, ApprovalStatus.REJECTED_UNIVERSITY,this.adminId).subscribe(
       (response) => {
         console.log('Decline response:', response);
         reservation.status = ApprovalStatus.REJECTED_UNIVERSITY;

@@ -12,6 +12,17 @@ export class AuthSerivce {
 
   constructor(private http: HttpClient) {}
 
+ registerAdmin(email: string, universityId: number) {
+  return this.http.post<any>(`${this.apiUrl}/uni-login`, {
+    email,
+    universityId
+  });
+}
+
+registerCckAdmin(email: string) {
+  return this.http.post<any>(`${this.apiUrl}/cck-login`, email);
+}
+
   login(creds: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, creds);
   }// Send the credentials to the backend
@@ -70,7 +81,7 @@ export class AuthSerivce {
   }
 
   adminLogin(creds: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/adminlogin`, creds);
+    return this.http.post<any>(`${this.baseUrl}/adminLogin`, creds);
   }
 
   uniLogin(creds: any): Observable<any> {
@@ -79,7 +90,6 @@ export class AuthSerivce {
   }
 
   
-
 
 
 

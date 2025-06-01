@@ -29,6 +29,13 @@
       <i class="fa-solid fa-money-bill-trend-up"></i>
       <a [routerLink]="'/university/billing'">Billing</a>
     </div>
+
+    <div class="icon logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <a href="#" (click)="logout()">Logout</a>
+    </div> 
+
+  
    
   </div>
 
@@ -38,7 +45,7 @@
 
     <div class="icon">
       <i class="fa-solid fa-gear"></i>
-      <a>Settings</a>
+      <a [routerLink]="'/university/professors'">Manage Professors</a>
     </div>
   </div>
 </nav>

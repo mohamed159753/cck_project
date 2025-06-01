@@ -37,9 +37,22 @@ export class UniversityReportsServiceService {
 
   constructor(private http: HttpClient) { }
 
-getUniDashboardStatistics(id: string): Observable<DashboardResponse> {
-    return this.http.get<DashboardResponse>(`${this.apiUrl}/admin/dashboard/university/${id}`);
+getUniDashboardStatistics(id: string, month?: number, year?: number): Observable<DashboardResponse> {
+  let params: any = {};
+
+  if (month != null) {
+    params.month = month;
   }
+
+  if (year != null) {
+    params.year = year;
+  }
+
+  return this.http.get<DashboardResponse>(
+    `${this.apiUrl}/admin/dashboard/university/${id}`,
+    { params }
+  );
+}
 
   getTopInstitutes(universityId: number, month: number, year: number): Observable<InstituteConsumption[]> {
     return this.http.get<InstituteConsumption[]>(`${this.apiUrl}/dashboard/institutes/${universityId}/${month}/${year}`);

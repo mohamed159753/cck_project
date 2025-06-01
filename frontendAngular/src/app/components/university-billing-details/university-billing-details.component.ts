@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../services/invoice-service.service';
+import { SidebarComponent } from "../../dashboard/sidebar/sidebar.component";
 
  interface Invoice {
   invoiceId: number;
@@ -29,8 +30,9 @@ import { InvoiceService } from '../../services/invoice-service.service';
     NgClass,
     NgIf,
     CommonModule,
-    FormsModule
-  ],
+    FormsModule,
+    SidebarComponent
+],
   templateUrl: './university-billing-details.component.html',
   styleUrl: './university-billing-details.component.css'
 })
@@ -39,6 +41,7 @@ export class UniversityBillingDetailsComponent implements OnInit {
   invoice: any;
   invoiceId: number | null = null;
   loading = true;
+   isUni = localStorage.getItem("universityName")
 
   constructor(
     private invoiceService: InvoiceService,
@@ -98,6 +101,13 @@ export class UniversityBillingDetailsComponent implements OnInit {
 }
 
   goBack(): void {
-    this.router.navigate(['/universityBilling']);
+    if (localStorage.getItem("universityName")){
+            this.router.navigate(['/university/billing']);
+
+    }
+    else{
+            this.router.navigate(['/cck/billing']);
+
+    }
   }
 }

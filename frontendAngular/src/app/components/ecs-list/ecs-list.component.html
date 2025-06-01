@@ -1,19 +1,162 @@
-<div *ngIf="loading">Loading ECS resources...</div>
+<app-prof-sidebar></app-prof-sidebar>
 
-<div *ngIf="!loading && activePaygEcs.length === 0">
-  <p>No active PAYG ECSs found.</p>
-</div>
-
-<div *ngIf="!loading && activePaygEcs.length > 0">
-  <div *ngFor="let ecs of activePaygEcs" class="ecs-card">
-    <h3>{{ ecs.type }}</h3>
-    <p><strong>vCPU:</strong> {{ ecs.vcpu }}</p>
-    <p><strong>RAM:</strong> {{ ecs.ram }} GB</p>
-    <p><strong>Storage:</strong> {{ ecs.storage }} GB</p>
-    <p><strong>Price:</strong> ${{ ecs.pricePerHour }} / hour</p>
-    <div *ngIf="ecs.externalId !== null && ecs.externalId !== undefined">
-        <button (click)="onStart(ecs)">Start</button>
-        <button (click)="onStop(ecs)">Stop</button>
+<div class="container mt-4">
+  <div *ngIf="loading" class="text-center mt-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
+    <p class="mt-2">Loading ECS list<span class="dots"></span></p>
+  </div>
+
+  <div *ngIf="!loading">
+
+    <!-- Quota ECS -->
+    <h2 class="mb-3">Active ECSs (Quota)</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+      <div *ngFor="let ecs of activeEcs" class="col">
+        <div class="card h-100 hover-shadow border border-primary">
+          <div class="card-body">
+            <h5 class="card-title text-primary">{{ ecs.name }}</h5>
+            <p class="card-text">
+              <strong>vCPUs:</strong> {{ ecs.vcpu }}<br>
+              <strong>RAM:</strong> {{ ecs.ram }} GB<br>
+               <strong>Status:</strong>
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': ecs.status === 'running',
+                    'bg-secondary': ecs.status === 'stopped' || ecs.status !== 'running'
+                  }">
+                  {{ ecs.status }}
+                </span>
+            </p>
+
+            <!-- Start/Stop Buttons -->
+            <div *ngIf="ecs.externalId">
+              <button
+                class="btn btn-success btn-sm me-2"
+                (click)="onStart(ecs)"
+                [disabled]="ecs.status === 'running'"
+                title="Start VM">
+                <i class="fa-solid fa-circle-play"></i> Start
+              </button>
+              <button
+                class="btn btn-danger btn-sm me-3"
+                (click)="onStop(ecs)"
+                [disabled]="ecs.status !== 'running'"
+                title="Stop VM">
+                <i class="fa-solid fa-stop"></i> Stop
+              </button>
+
+              <!-- VNC -->
+              <div class="d-flex align-items-center mt-3">
+                <a
+                  class="btn btn-outline-primary btn-sm me-2"
+                  [href]="vncUrls[ecs.externalId]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  *ngIf="vncUrls[ecs.externalId]">
+                  <i class="bi bi-tv-fill"></i> Open VNC
+                </a>
+
+                <button
+                  class="btn btn-warning btn-sm"
+                  title="Regenerate VNC Link"
+                  (click)="onRegenerateVnc(ecs)"
+                  [disabled]="ecs.status !== 'running'">
+                  <i class="bi bi-arrow-clockwise"></i> Regenerate VNC
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYG ECS -->
+    <h2 class="mb-3">Active ECSs (PAYG)</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div *ngFor="let ecs of activePaygEcs" class="col">
+        <div class="card h-100 hover-shadow border border-warning">
+          <div class="card-body">
+            <h5 class="card-title text-warning">{{ ecs.name }}</h5>
+            <p class="card-text">
+              <strong>vCPUs:</strong> {{ ecs.vcpu }}<br>
+              <strong>RAM:</strong> {{ ecs.ram }} GB<br>
+              <strong>Status:</strong>
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': ecs.status === 'running',
+                    'bg-secondary': ecs.status === 'stopped' || ecs.status !== 'running'
+                  }">
+                  {{ ecs.status }}
+                </span>
+            </p>
+
+            <!-- Start/Stop Buttons -->
+            <div *ngIf="ecs.externalId">
+              <button
+                class="btn btn-success btn-sm me-2"
+                (click)="onPaygStart(ecs)"
+                [disabled]="ecs.status === 'running'"
+                title="Start VM">
+                <i class="fa-solid fa-circle-play"></i> Start
+              </button>
+              <button
+                class="btn btn-danger btn-sm me-3"
+                (click)="onPaygStop(ecs)"
+                [disabled]="ecs.status !== 'running'"
+                title="Stop VM">
+                <i class="fa-solid fa-stop"></i> Stop
+              </button>
+
+              <!-- VNC -->
+              <div class="d-flex align-items-center mt-3">
+                <a
+                  class="btn btn-outline-primary btn-sm me-2"
+                  [href]="vncUrls[ecs.externalId]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  *ngIf="vncUrls[ecs.externalId]">
+                  <i class="bi bi-tv-fill"></i> Open VNC
+                </a>
+
+                <button
+                  class="btn btn-warning btn-sm"
+                  title="Regenerate VNC Link"
+                  (click)="onRegenerateVnc(ecs)"
+                  [disabled]="ecs.status !== 'running'">
+                  <i class="bi bi-arrow-clockwise"></i> Regenerate VNC
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<style>
+  .dots::after {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    animation: ellipsis steps(4, end) 1.5s infinite;
+    content: '...';
+    width: 0;
+  }
+
+  @keyframes ellipsis {
+    to {
+      width: 1.5em;
+    }
+  }
+
+  .hover-shadow:hover {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.4) !important;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+</style>

@@ -30,10 +30,18 @@
       <a [routerLink]="'/prof/reservations'">Reservations</a>
     </div>
     <div class="icon" routerLinkActive="active">
+      <i class="fa-solid fa-desktop"></i>
+      <a [routerLink]="'/prof/ecs-list'">My ECSs</a>
+    </div>
+    <div class="icon" routerLinkActive="active">
       <i class="fa-solid fa-money-bill-trend-up"></i>
       <a [routerLink]="'/prof/metrics'">Metrics</a>
     </div>
-   
+
+    <div class="icon logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <a href="#" (click)="logout()">Logout</a>
+    </div>   
   </div>
 
   <!-- Support Section -->

@@ -48,7 +48,7 @@ interface Reservation {
 @Component({
   selector: 'app-cck-manage-reservations',
   standalone: true,
-  imports: [CommonModule, DatePipe, SidebarComponent,FormsModule],
+  imports: [CommonModule, DatePipe, SidebarComponent, FormsModule],
   templateUrl: './cck-manage-reservations.component.html',
   styleUrls: ['./cck-manage-reservations.component.css'],
   providers: [DatePipe]
@@ -59,6 +59,8 @@ export class CckManageReservationsComponent implements OnInit {
   approvalStatus = ApprovalStatus; // Make the enum available in the template
   filteredReservations: Reservation[] = [];
   selectedFilter: string = 'all';
+
+  adminId = localStorage.getItem("adminId");
 
   constructor(
     private manageReservationsService: CckManageReservationsServiceService,
@@ -85,39 +87,85 @@ export class CckManageReservationsComponent implements OnInit {
   }
 
   loadReservations(): void {
-    this.manageReservationsService.getReservations().subscribe(
-      data => {
+    this.manageReservationsService.getReservations().subscribe({
+      next: (data) => {
+        console.log('Raw reservations data:', data); // Debug log
         this.reservations = data;
         this.applyFilter(this.selectedFilter);
+        console.log('Filtered reservations:', this.filteredReservations); // Debug log
       },
-      error => console.error('Error loading reservations:', error)
-    );
+      error: (error) => {
+        console.error('Error loading reservations:', error);
+      }
+    });
   }
 
   applyFilter(filterType: string): void {
+    console.log('Applying filter:', filterType); // Debug log
     this.selectedFilter = filterType;
+    
+    // Log all unique statuses to help debug
+    const uniqueStatuses = [...new Set(this.reservations.map(r => r.status))];
+    console.log('Available statuses in data:', uniqueStatuses);
     
     switch (filterType) {
       case 'pending':
-        this.filteredReservations = this.reservations.filter(r => 
-          r.status === ApprovalStatus.PENDING_CCK);
+        this.filteredReservations = this.reservations.filter(r => {
+          const matches = r.status === ApprovalStatus.PENDING_CCK;
+          console.log(`Reservation ${r.id} status: ${r.status}, matches pending: ${matches}`);
+          return matches;
+        });
         break;
       case 'approved':
-        this.filteredReservations = this.reservations.filter(r => 
-          r.status === ApprovalStatus.APPROVED_CCK);
+        this.filteredReservations = this.reservations.filter(r => {
+          const matches = r.status === ApprovalStatus.APPROVED_CCK;
+          console.log(`Reservation ${r.id} status: ${r.status}, matches approved: ${matches}`);
+          return matches;
+        });
         break;
       case 'rejected':
-        this.filteredReservations = this.reservations.filter(r => 
-          r.status === ApprovalStatus.REJECTED_CCK);
+        this.filteredReservations = this.reservations.filter(r => {
+          const matches = r.status === ApprovalStatus.REJECTED_CCK;
+          console.log(`Reservation ${r.id} status: ${r.status}, matches rejected: ${matches}`);
+          return matches;
+        });
         break;
       case 'university-approved':
-        this.filteredReservations = this.reservations.filter(r => 
-          r.status === ApprovalStatus.APPROVED_UNIVERSITY);
+        this.filteredReservations = this.reservations.filter(r => {
+          const matches = r.status === ApprovalStatus.APPROVED_UNIVERSITY;
+          console.log(`Reservation ${r.id} status: ${r.status}, matches university-approved: ${matches}`);
+          return matches;
+        });
         break;
+      case 'university-pending':
+        this.filteredReservations = this.reservations.filter(r => {
+          const matches = r.status === ApprovalStatus.PENDING_UNIVERSITY;
+          console.log(`Reservation ${r.id} status: ${r.status}, matches university-pending: ${matches}`);
+          return matches;
+        });
+        break;
+      case 'university-rejected':
+        this.filteredReservations = this.reservations.filter(r => {
+          const matches = r.status === ApprovalStatus.REJECTED_UNIVERSITY;
+          console.log(`Reservation ${r.id} status: ${r.status}, matches university-rejected: ${matches}`);
+          return matches;
+        });
+        break;
+      case 'all':
       default:
-        this.filteredReservations = this.reservations;
+        this.filteredReservations = [...this.reservations]; // Create a new array reference
         break;
     }
+
+    console.log(`Filter '${filterType}' applied. Results: ${this.filteredReservations.length} reservations`);
+    
+    // Force change detection
+    this.cdRef.detectChanges();
+  }
+
+  // Method to be called from template
+  onFilterChange(filterType: string): void {
+    this.applyFilter(filterType);
   }
 
   toggleDetails(reservationId: number): void {
@@ -140,23 +188,24 @@ export class CckManageReservationsComponent implements OnInit {
     reservation.status = 'Processing...';
 
     console.log(`CCK approving reservation ${reservation.id} with status ${ApprovalStatus.APPROVED_CCK}`);
-    
-    this.manageReservationsService.updateReservationStatus(reservation.id, ApprovalStatus.APPROVED_CCK).subscribe(
-      (response) => {
+    this.manageReservationsService.updateReservationStatus(reservation.id, ApprovalStatus.APPROVED_CCK, this.adminId).subscribe({
+      next: (response) => {
         console.log('Approval response:', response);
         reservation.status = ApprovalStatus.APPROVED_CCK;
         console.log(`Reservation #${reservation.id} has been approved by CCK successfully`);
         this.cdRef.detectChanges();
+        // Reload and reapply current filter
         this.loadReservations();
       },
-      error => {
+      error: (error) => {
         console.error('Error approving reservation:', error);
         console.error('Status:', error.status);
         console.error('Message:', error.message);
         console.error('Error details:', error.error);
         reservation.status = originalStatus;
+        this.cdRef.detectChanges();
       }
-    );
+    });
   }
 
   rejectReservation(reservation: Reservation): void {
@@ -172,22 +221,24 @@ export class CckManageReservationsComponent implements OnInit {
 
     console.log(`CCK rejecting reservation ${reservation.id} with status ${ApprovalStatus.REJECTED_CCK}`);
     
-    this.manageReservationsService.updateReservationStatus(reservation.id, ApprovalStatus.REJECTED_CCK).subscribe(
-      (response) => {
+    this.manageReservationsService.updateReservationStatus(reservation.id, ApprovalStatus.REJECTED_CCK, this.adminId).subscribe({
+      next: (response) => {
         console.log('Rejection response:', response);
         reservation.status = ApprovalStatus.REJECTED_CCK;
         console.log(`Reservation #${reservation.id} has been rejected by CCK successfully`);
         this.cdRef.detectChanges();
+        // Reload and reapply current filter
         this.loadReservations();
       },
-      error => {
+      error: (error) => {
         console.error('Error rejecting reservation:', error);
         console.error('Status:', error.status);
         console.error('Message:', error.message);
         console.error('Error details:', error.error);
         reservation.status = originalStatus;
+        this.cdRef.detectChanges();
       }
-    );
+    });
   }
 
   getStatusClass(status: string): string {
@@ -210,6 +261,29 @@ export class CckManageReservationsComponent implements OnInit {
         return 'bg-primary text-white';
       default:
         return 'bg-light text-dark';
+    }
+  }
+
+  getStatusDisplay(status: string): string {
+    switch (status) {
+      case ApprovalStatus.PENDING_UNIVERSITY:
+        return 'Pending University';
+      case ApprovalStatus.APPROVED_UNIVERSITY:
+        return 'University Approved';
+      case ApprovalStatus.REJECTED_UNIVERSITY:
+        return 'University Rejected';
+      case ApprovalStatus.PENDING_CCK:
+        return 'Pending CCK';
+      case ApprovalStatus.APPROVED_CCK:
+        return 'CCK Approved';
+      case ApprovalStatus.REJECTED_CCK:
+        return 'CCK Rejected';
+      case 'EXPIRED':
+        return 'Expired';
+      case 'Processing...':
+        return 'Processing...';
+      default:
+        return status;
     }
   }
 
@@ -239,5 +313,26 @@ export class CckManageReservationsComponent implements OnInit {
     const diffHrs = diffMs / (1000 * 60 * 60);
     
     return reservation.resource.pricePerHour * diffHrs;
+  }
+
+  // Helper method to get filter counts
+  getFilterCount(filterType: string): number {
+    switch (filterType) {
+      case 'pending':
+        return this.reservations.filter(r => r.status === ApprovalStatus.PENDING_CCK).length;
+      case 'approved':
+        return this.reservations.filter(r => r.status === ApprovalStatus.APPROVED_CCK).length;
+      case 'rejected':
+        return this.reservations.filter(r => r.status === ApprovalStatus.REJECTED_CCK).length;
+      case 'university-approved':
+        return this.reservations.filter(r => r.status === ApprovalStatus.APPROVED_UNIVERSITY).length;
+      case 'university-pending':
+        return this.reservations.filter(r => r.status === ApprovalStatus.PENDING_UNIVERSITY).length;
+      case 'university-rejected':
+        return this.reservations.filter(r => r.status === ApprovalStatus.REJECTED_UNIVERSITY).length;
+      case 'all':
+      default:
+        return this.reservations.length;
+    }
   }
 }

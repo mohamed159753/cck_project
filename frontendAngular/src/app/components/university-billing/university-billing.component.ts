@@ -35,7 +35,7 @@ export class UniversityBillingComponent implements OnInit {
   
   displayedColumns: string[] = ['month', 'fixedAmount', 'paygTotal', 'totalAmount', 'status', 'dueDate', 'actions'];
 
-  constructor(private invoiceService: InvoiceService) {
+  constructor(private invoiceService: InvoiceService, private router:Router) {
     // Set university ID from current logged-in user
     // In a real app, this would come from an auth service
     this.universityId = localStorage.getItem("universityId");
@@ -124,6 +124,7 @@ generateMonthOptions() {
   viewInvoiceDetails(invoice: Invoice) {
     // In a real app, this would navigate to a detail view
     console.log('View invoice details:', invoice);
+    this.router.navigate([`university/billing-details/${invoice.invoiceId}`])
   }
 }
 

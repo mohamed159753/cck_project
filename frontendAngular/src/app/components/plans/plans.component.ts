@@ -50,7 +50,7 @@ export class PlansComponent {
     this.plansService.uniregister(universityId,payload).subscribe({
       next: () => {
         // Save success → redirect to dashboard
-        this.router.navigate(['/dashboard/university-reports']);
+        this.router.navigate(['/university/reports']);
       },
       error: (err) => {
         console.error('Failed to register university:', err);

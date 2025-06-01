@@ -88,5 +88,11 @@ export class InvoiceService {
   return this.http.get(`${this.apiUrl}/${invoiceId}/download/pdf`, {
     responseType: 'blob'
   });
+
+ 
 }
+
+ updateInvoiceStatus(invoiceId:any,status:String){
+    return this.http.put<any>(`${this.apiUrl}/${invoiceId}`,status)
+  }
 }

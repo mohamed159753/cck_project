@@ -71,11 +71,16 @@ export class LoginComponent {
     this.authService.uniLogin(this.universityCredentials).subscribe((response: any) => {
       const universityId = response.university.id;
       const universityName = response.university.name;
+      const email = response.university.email;
   
       // Save auth token and university ID for later use (e.g., saving later in plans page)
       localStorage.setItem('TOKEN', response.TOKEN);
       localStorage.setItem('universityId', universityId);
       localStorage.setItem('universityName', universityName);
+
+      this.authService.registerAdmin(email, universityId).subscribe((res) => {
+         localStorage.setItem('adminId',res.id);
+      });
   
       // Step 1: Check if university already exists
       this.authService.getUniById(universityId).subscribe({

@@ -82,6 +82,17 @@ h3 {
     font-weight: 600;
 }
 
+.logout:hover {
+    color: red;
+    background-color: #E8EEFE;
+}
+
+.logout.active {
+    color: red;
+    background-color: #E8EEFE;
+    font-weight: 600;
+}
+
 /* Mobile menu toggle (hidden by default) */
 .mobile-menu-toggle {
     display: none;

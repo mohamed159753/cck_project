@@ -20,9 +20,10 @@ export class ReportsComponent implements AfterViewInit, OnInit, OnDestroy {
   chart!: Chart;
 
   // Filter Options
-  universities = ['All'];
+  universities : any = ['All'];
+  uniNames = [];
   resources = ['CPU', 'RAM', 'Storage'];
-  selectedUniversity = 'All';
+  selectedUniversity = '';
   selectedResource = 'CPU';
 
   // Dashboard Data
@@ -56,17 +57,17 @@ export class ReportsComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  getUni() {
-    this.cckDashboardService.getUni().subscribe((res) => {
-      console.log('Universities:', res);
-      this.universities = ['All', ...res.map((uni: any) => uni.id)];
-    });
-  }
+ getUni() {
+  this.cckDashboardService.getUni().subscribe((res) => {
+    console.log('Universities:', res);
+    this.universities = [{ id: '', universityName: 'All' }, ...res];  // Add 'All' option at start
+  });
+}
 
   loadDashboardData() {
     this.loading = true;
     
-    const dashboardObservable = this.selectedUniversity === 'All'
+    const dashboardObservable = this.selectedUniversity === ''
       ? this.cckDashboardService.getDashboardStatistics()
       : this.cckDashboardService.getUniDashboardStatistics(this.selectedUniversity);
 
@@ -157,20 +158,19 @@ export class ReportsComponent implements AfterViewInit, OnInit, OnDestroy {
 
   initializeChart() {
     if (!this.barChartRef?.nativeElement) {
-      console.error('Canvas element not available');
-      return;
-    }
+    console.error('Canvas element not available');
+    return;
+  }
 
-    const ctx = this.barChartRef.nativeElement.getContext('2d');
-    if (!ctx) {
-      console.error('Could not get canvas context');
-      return;
-    }
+  const ctx = this.barChartRef.nativeElement.getContext('2d');
+  if (!ctx) {
+    console.error('Could not get canvas context');
+    return;
+  }
 
-    // Destroy existing chart if it exists
-    if (this.chart) {
-      this.chart.destroy();
-    }
+  if (this.chart) {
+    this.chart.destroy();
+  }
 
     const chartData = this.getChartData();
 
@@ -237,21 +237,24 @@ export class ReportsComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateChartData() {
-    if (!this.chart || !this.chartInitialized) {
-      // If chart isn't ready, try to initialize it
-      setTimeout(() => {
-        this.initializeChart();
-      }, 100);
-      return;
-    }
+  const chartData = this.getChartData();
 
-    const chartData = this.getChartData();
-    
-    // Smooth update of existing chart
-    this.chart.data.datasets[0].data = chartData;
-    this.chart.data.datasets[0].label = `${this.selectedResource} Usage`;
-    this.chart.update('active'); // Use 'active' animation mode for smoother transitions
+  if (!this.chart || !this.chartInitialized) {
+    this.initializeChart();
+    // After initializing, update the dataset and label immediately
+    if (this.chart) {
+      this.chart.data.datasets[0].data = chartData;
+      this.chart.data.datasets[0].label = `${this.selectedResource} Usage`;
+      this.chart.update();
+    }
+    return;
   }
+
+  // If chart exists and initialized, just update data
+  this.chart.data.datasets[0].data = chartData;
+  this.chart.data.datasets[0].label = `${this.selectedResource} Usage`;
+  this.chart.update('active'); // smoother transition
+}
 
   updateAlerts() {
     const data = this.getFilteredData();
@@ -272,14 +275,13 @@ export class ReportsComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onFilterChange() {
-    console.log('Filter changed - University:', this.selectedUniversity, 'Resource:', this.selectedResource);
-    
-    // Prevent default form submission behavior
-    event?.preventDefault();
-    
-    // Smooth transition - no page refresh
-    this.loadDashboardData();
-  }
+  console.log('Filter changed - University:', this.selectedUniversity, 'Resource:', this.selectedResource);
+  this.loadDashboardData();
+
+  setTimeout(() => {
+    this.initializeChart();
+  }, 300);
+}
 
   getResourceUsageForUniversity(uni: any): number {
     if (!uni) return 0;

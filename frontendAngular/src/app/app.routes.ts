@@ -63,6 +63,7 @@ export const appRoutes: Routes = [
       { path: 'reports', loadComponent: () => import('./dashboard/pages/reports/reports.component').then(m => m.ReportsComponent ) },
       { path: 'billing', loadComponent: () => import('./dashboard/pages/bills-management/bills-management.component').then(m => m.BillsManagementComponent) },
       { path: 'reservations', component:CckManageReservationsComponent },
+      { path: 'billing-details/:id', component:UniversityBillingDetailsComponent},
       { path: 'login',component:AdminLoginComponent}
 
 

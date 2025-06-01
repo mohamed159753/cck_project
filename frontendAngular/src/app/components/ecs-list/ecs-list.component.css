@@ -1,7 +1,112 @@
-.ecs-card {
-  border: 1px solid #ccc;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+/* === General Reset & Base === */
+.body {
+  background-color: #f9f9f9;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+.container {
+  margin-left: 300px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+
+/* === Cards === */
+.card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 5px solid #0d6efd; /* Default border color (Bootstrap primary) */
+  border-radius: 1.5rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* === Card Header === */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* === List Items in Card === */
+.card .list-unstyled li {
+  margin-bottom: 0.35rem;
+  color: #444;
+}
+
+/* === Buttons === */
+.btn {
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-outline-primary {
+  padding: 0.4rem 0.9rem;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* === VNC + Actions Section === */
+.card-body .d-flex.align-items-center.mt-3 {
+  margin-top: auto;
+}
+
+/* === Status Badge === */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.45em 0.7em;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+/* === Spinner & Loading === */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.fs-5.fw-semibold {
+  font-size: 1.25rem;
+}
+
+/* === Loading Dots Animation === */
+.dots::after {
+  content: '...';
+  animation: dots 1.4s steps(4, end) infinite;
+}
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75%, 100% { content: '...'; }
+}
+
+/* === Card Hover Highlight === */
+.hover-shadow:hover {
+  box-shadow: 0 0 18px rgba(13, 110, 253, 0.3) !important;
+}
+
+/* === Utilities === */
+.rounded-4 {
+  border-radius: 1.5rem !important;
+}
+
+/* === Responsive Sidebar on Small Devices === */
+@media (max-width: 768px) {
+  .bg-light {
+    border-right: none;
+    box-shadow: none;
+  }
 }

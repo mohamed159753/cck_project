@@ -26,10 +26,10 @@ export class CckManageReservationsServiceService {
         .pipe(catchError(this.handleError));
     }
   
-  updateReservationStatus(reservationId: number, status: string): Observable<any> {
+  updateReservationStatus(reservationId: number, status: string,adminId:any): Observable<any> {
       // Backend expects a request body with a status field as per the controller
       return this.http.put<any>(`${this.apiUrl}/reservations/${reservationId}/status`, {
-        status: status
+        status: status,adminId:adminId
       });
     }
   

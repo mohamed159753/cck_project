@@ -8,8 +8,7 @@
 
         <div class="filtre">
             <select id="university" [(ngModel)]="selectedUniversity" (change)="onFilterChange()">
-                <option value="">Select University</option>
-                <option *ngFor="let uni of universities" [value]="uni">{{ uni }}</option>
+                <option *ngFor="let uni of universities" [value]="uni.id">{{ uni.universityName }}</option>
             </select>
             <select id="resource" [(ngModel)]="selectedResource" (change)="onFilterChange()">
                 <option value="">Select Resource</option>

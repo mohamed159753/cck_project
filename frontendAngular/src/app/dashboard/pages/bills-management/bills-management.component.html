@@ -1,3 +1,5 @@
+
+<app-sidebar></app-sidebar>
 <div class="container my-4 admin-billing-container">
   <h2>Billing Management</h2>
 
@@ -6,7 +8,7 @@
     <div class="col-md-3 mb-3">
       <div class="card bg-light">
         <div class="card-body">
-          <div class="summary-value h4">{{ summaryData.totalAmount | currency }}</div>
+          <div class="summary-value h4">{{ summaryData.totalAmount  }} DT</div>
           <div class="summary-label">Total Billing</div>
         </div>
       </div>
@@ -14,7 +16,7 @@
     <div class="col-md-3 mb-3">
       <div class="card bg-success text-white">
         <div class="card-body">
-          <div class="summary-value h4">{{ summaryData.paidAmount | currency }}</div>
+          <div class="summary-value h4">{{ summaryData.paidAmount}} DT</div>
           <div class="summary-label">Paid</div>
         </div>
       </div>
@@ -22,7 +24,7 @@
     <div class="col-md-3 mb-3">
       <div class="card bg-warning text-dark">
         <div class="card-body">
-          <div class="summary-value h4">{{ summaryData.pendingAmount | currency }}</div>
+          <div class="summary-value h4">{{ summaryData.pendingAmount}} DT</div>
           <div class="summary-label">Pending</div>
         </div>
       </div>
@@ -30,7 +32,7 @@
     <div class="col-md-3 mb-3">
       <div class="card bg-danger text-white">
         <div class="card-body">
-          <div class="summary-value h4">{{ summaryData.overdueAmount | currency }}</div>
+          <div class="summary-value h4">{{ summaryData.overdueAmount}} DT</div>
           <div class="summary-label">Overdue</div>
         </div>
       </div>
@@ -53,10 +55,10 @@
       <label class="form-label">Filter by University</label>
       <select class="form-select" [formControl]="universityControl">
         <option value="">All Universities</option>
-        <option *ngFor="let uni of universities" [value]="uni.universityId">
-          {{ uni.universityName }}
-        </option>
-      </select>
+        <option *ngFor="let uni of universities" [value]="uni.id">
+    {{ uni.universityName }}
+  </option>
+</select>
     </div>
 
     <div class="col-md-2 mb-3">
@@ -109,7 +111,7 @@
           <td>
             <span class="badge" [ngClass]="{
               'bg-success': invoice.status === 'PAID',
-              'bg-warning text-dark': invoice.status === 'PENDING',
+              'bg-warning text-dark': invoice.status === 'unpaid',
               'bg-danger': invoice.status === 'OVERDUE'
             }">
               {{ invoice.status }}
@@ -119,7 +121,7 @@
           <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
           <td>
             <div class="btn-group" role="group">
-              <button class="btn btn-sm btn-outline-info" title="View Details" (click)="viewInvoiceDetails(invoice)">
+              <button class="btn btn-sm btn-outline-info" title="View Details" (click)="viewInvoiceDetails(invoice)">Details
                 <i class="bi bi-eye"></i>
               </button>
               <div class="btn-group" dropdown>
@@ -142,7 +144,7 @@
     </table>
 
     <!-- Simple Pagination (Example) -->
-    <nav *ngIf="dataSource.length > pageSize">
+    <nav *ngIf="invoices.length > pageSize">
       <ul class="pagination justify-content-end">
         <li class="page-item" [class.disabled]="currentPage === 1">
           <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>

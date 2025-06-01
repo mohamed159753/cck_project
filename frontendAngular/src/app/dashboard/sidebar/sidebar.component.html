@@ -19,29 +19,23 @@
     <div class="nav-section">
         <div class="icon" routerLinkActive="active">
             <i class="fa-solid fa-chart-simple"></i>
-            <a routerLink="/dashboard/reports">Reports</a>
+            <a [routerLink]="'/cck/reports'">Reports</a>
         </div>
         
         <div class="icon" routerLinkActive="active">
             <i class="fa-solid fa-users-gear"></i>
-            <a routerLink="/dashboard/manage-reservations">Manage reservations</a>
+            <a [routerLink]="'/cck/reservations'">Manage Reservations</a>
         </div>
         
         <div class="icon" routerLinkActive="active">
             <i class="fa-solid fa-money-bill-trend-up"></i>
-            <a routerLink="/dashboard/bills-management">Bills Management</a>
+            <a [routerLink]="'/cck/billing'">Bils Management</a>
         </div>
-        
-    
-    <!-- Support section -->
-    <div class="nav-section">
-        <h3>Support</h3>
-        
-        
-        <div class="icon">
-            <i class="fa-solid fa-gear"></i>
-            <a>Settings</a>
-        </div>
+
+         <div class="icon logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <a href="#" (click)="logout()">Logout</a>
     </div>
+        
     </div>
 </nav>

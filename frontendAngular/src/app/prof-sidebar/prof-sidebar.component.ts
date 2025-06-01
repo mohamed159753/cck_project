@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-prof-sidebar',
@@ -12,11 +12,19 @@ import { RouterLink } from '@angular/router';
 })
 export class ProfSidebarComponent {
 
+    constructor(private router: Router) {}
+
+
   isMobileMenuOpen = false;
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
 
+  }
+
+  logout() {
+    localStorage.removeItem('token2');
+    this.router.navigate(['/login']); // or route by role
   }
 
 }

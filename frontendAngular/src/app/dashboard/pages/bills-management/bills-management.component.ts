@@ -3,6 +3,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgFor, NgIf, CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { InvoiceService } from '../../../services/invoice-service.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-bills-management',
@@ -22,7 +23,7 @@ export class BillsManagementComponent implements AfterViewInit, OnInit {
   universityControl = new FormControl('');
 
   availableMonths: { value: string; viewValue: string }[] = [];
-  universities: { universityId: string; universityName: string }[] = [];
+  universities: { id: string; universityName: string }[] = [];
 
   // Summary
   summaryData = {
@@ -39,7 +40,7 @@ export class BillsManagementComponent implements AfterViewInit, OnInit {
   totalPages = 1;
   totalPagesArray: number[] = [];
 
-  constructor(private invoiceService: InvoiceService) {}
+  constructor(private invoiceService: InvoiceService, private router:Router) {}
 
   ngAfterViewInit(): void {}
 
@@ -83,15 +84,16 @@ export class BillsManagementComponent implements AfterViewInit, OnInit {
     });
   }
 
-  extractUniversities(invoices: any[]) {
-    const unique = new Map();
-    invoices.forEach(inv => {
-      if (inv.university && !unique.has(inv.university.universityId)) {
-        unique.set(inv.university.universityId, inv.university);
-      }
-    });
-    this.universities = Array.from(unique.values());
-  }
+ extractUniversities(invoices: any[]) {
+  const unique = new Map();
+  invoices.forEach(inv => {
+    if (inv.university && !unique.has(inv.university.id)) {
+      unique.set(inv.university.id, inv.university);
+    }
+  });
+  this.universities = Array.from(unique.values());
+  console.log('Final universities array:', this.universities);
+}
 
   updateSummaryData(invoices: any[]) {
     this.summaryData = {
@@ -194,11 +196,15 @@ export class BillsManagementComponent implements AfterViewInit, OnInit {
 
   viewInvoiceDetails(invoice: any) {
     console.log('Invoice details:', invoice);
+    this.router.navigate([`cck/billing-details/${invoice.invoiceId}`])
     // Add dialog or routing logic here
   }
 
   updateInvoiceStatus(invoice: any, newStatus: string) {
     console.log(`Change status of invoice ${invoice.invoiceId} to ${newStatus}`);
+    this.invoiceService.updateInvoiceStatus(invoice.invoiceId,newStatus).subscribe((res)=>{
+      console.log(res);
+    })
     // Add API call here if needed
   }
 }

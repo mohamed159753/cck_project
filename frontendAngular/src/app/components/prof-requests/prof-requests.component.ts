@@ -32,6 +32,7 @@ export class ProfRequestsComponent implements OnInit {
     this.requestService.getProfessorReservations(token).subscribe({
       next: (response) => {
         this.reservations = response;
+        console.log(response)
         this.filteredReservations = [...this.reservations];
       },
       error: (err) => {

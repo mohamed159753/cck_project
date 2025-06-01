@@ -20,10 +20,10 @@ export class UniversityReportsComponent implements AfterViewInit, OnInit {
 
   selectedResource: 'vcpu' | 'ram' | 'storage' = 'vcpu';
   data: any = {};
-  topData:any;
+  topData: any;
   isLoading = true;
   loadError = false;
-  universityId:any;
+  universityId: any;
 
   reservationsData = {
     total: 0,
@@ -52,11 +52,8 @@ export class UniversityReportsComponent implements AfterViewInit, OnInit {
     { name: 'December', value: 12, key: 'dec' }
   ];
 
-  years=[
-    {name:'2025', value:2025}
-  ]
+  years = [{ name: '2025', value: 2025 }];
 
- 
   selectedMonth = new Date().getMonth() + 1;
   selectedYear = new Date().getFullYear();
 
@@ -68,23 +65,20 @@ export class UniversityReportsComponent implements AfterViewInit, OnInit {
   constructor(private reportService: UniversityReportsServiceService) {}
 
   ngOnInit(): void {
+    this.universityId = localStorage.getItem('universityId');
     this.loadDashboardData();
   }
 
   ngAfterViewInit(): void {
-    // Wait for canvas to exist, then create chart once data is available
-    setTimeout(() => {
-      if (this.data && Object.keys(this.data).length) {
-        this.createChart();
-      }
-    }, 500);
+    // Do NOT call createChart here because canvas may not be rendered yet
   }
 
   loadDashboardData(): void {
-    this.isLoading = true;
-    this.loadError = false;
-    this.universityId = localStorage.getItem("universityId")
-    this.reportService.getUniDashboardStatistics(this.universityId).subscribe({
+  this.isLoading = true;
+  this.loadError = false;
+
+  this.reportService.getUniDashboardStatistics(this.universityId, this.selectedMonth, this.selectedYear)
+    .subscribe({
       next: (data: any) => {
         this.data = data;
 
@@ -94,11 +88,20 @@ export class UniversityReportsComponent implements AfterViewInit, OnInit {
 
         this.usageStatistics = data.usageStatistics;
 
-        this.updateQuotaDisplay();
-        this.updateUsageAlert();
-        this.createChart();
-
         this.isLoading = false;
+
+        // Destroy existing chart before recreating
+        if (this.chart) {
+          this.chart.destroy();
+          this.chart = undefined!;
+        }
+
+        // Wait for canvas to be rendered again then create chart
+        setTimeout(() => {
+          this.updateQuotaDisplay();
+          this.updateUsageAlert();
+          this.createChart();
+        }, 0);
       },
       error: () => {
         this.isLoading = false;
@@ -106,45 +109,35 @@ export class UniversityReportsComponent implements AfterViewInit, OnInit {
       }
     });
 
-    this.reportService.getTopInstitutes(this.universityId,this.selectedMonth, this.selectedYear).
-    subscribe((topData:any)=>{
-      this.topData = topData;
-      console.log(this.selectedMonth);
-      console.log(this.selectedYear);
-      console.log('TopInstitutes: ',topData);
-    })
-  }
+  this.refreshTopInstitutesData();
+}
 
   onMonthChange(event: Event): void {
     const value = parseInt((event.target as HTMLSelectElement).value, 10);
     this.selectedMonth = value;
-    this.updateQuotaDisplay();
-    this.updateUsageAlert();
-    this.refreshTopInstitutesData(); // Add this call to refresh data when month changes
-}
+    this.loadDashboardData();
+  }
 
-onYearChange(event: Event): void {
-  const value = parseInt((event.target as HTMLSelectElement).value, 10);
-  this.selectedYear = value;
-  this.updateQuotaDisplay();
-  this.updateUsageAlert();
-  this.refreshTopInstitutesData(); // Add this call to refresh data when year changes
-}
+  onYearChange(event: Event): void {
+    const value = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.selectedYear = value;
+    this.loadDashboardData();
+  }
 
-refreshTopInstitutesData(): void {
-  this.reportService.getTopInstitutes(this.universityId, this.selectedMonth, this.selectedYear)
-    .subscribe({
-      next: (topData: any) => {
-        this.topData = topData;
-        console.log('Month:', this.selectedMonth);
-        console.log('Year:', this.selectedYear);
-        console.log('TopInstitutes:', topData);
-      },
-      error: (err) => {
-        console.error('Error fetching top institutes:', err);
-      }
-    });
-}
+  refreshTopInstitutesData(): void {
+    this.reportService.getTopInstitutes(this.universityId, this.selectedMonth, this.selectedYear)
+      .subscribe({
+        next: (topData: any) => {
+          this.topData = topData;
+          console.log('Month:', this.selectedMonth);
+          console.log('Year:', this.selectedYear);
+          console.log('TopInstitutes:', topData);
+        },
+        error: (err) => {
+          console.error('Error fetching top institutes:', err);
+        }
+      });
+  }
 
   onResourceTypeChange(event: Event): void {
     this.selectedResource = (event.target as HTMLSelectElement).value as 'vcpu' | 'ram' | 'storage';
@@ -171,47 +164,51 @@ refreshTopInstitutesData(): void {
     this.currentUsage = selected.total > 0 ? Math.round((selected.used / selected.total) * 100) : 0;
   }
 
-updateUsageAlert(): void {
-  if (this.currentUsage >= 80) {
-    this.usageMessage = 'High Usage';
-    this.usageColor = 'alert-danger'; // <-- Bootstrap red
-  } else if (this.currentUsage >= 50) {
-    this.usageMessage = 'Moderate Usage';
-    this.usageColor = 'alert-warning'; // <-- Bootstrap yellow
-  } else {
-    this.usageMessage = 'Low Usage';
-    this.usageColor = 'alert-success'; // <-- Bootstrap green
+  updateUsageAlert(): void {
+    if (this.currentUsage >= 80) {
+      this.usageMessage = 'High Usage';
+      this.usageColor = 'alert-danger';
+    } else if (this.currentUsage >= 50) {
+      this.usageMessage = 'Moderate Usage';
+      this.usageColor = 'alert-warning';
+    } else {
+      this.usageMessage = 'Low Usage';
+      this.usageColor = 'alert-success';
+    }
   }
-}
 
   getUsageData(): Record<string, number> {
     const result: Record<string, number> = {};
     this.months.forEach(month => {
       const usage = this.usageStatistics[month.key];
-      result[month.key] = usage ?  (usage[this.selectedResource] /this.quotaData.total) *100 || 0 : 0;
-      
+      result[month.key] = usage ? (usage[this.selectedResource] / this.quotaData.total) * 100 || 0 : 0;
     });
-    console.log(result)
     return result;
   }
 
   createChart(): void {
-    if (!this.barChartRef) return;
+    if (!this.barChartRef?.nativeElement) {
+      console.error('barChartRef not ready');
+      return;
+    }
 
     const ctx = this.barChartRef.nativeElement.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.error('Canvas context not found');
+      return;
+    }
 
     const usageData = this.getUsageData();
     const labels = this.months.map(m => m.name);
 
     if (this.chart) {
-      this.chart.destroy();
+      this.chart.destroy(); // clean before re-creating
     }
 
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: labels,
+        labels,
         datasets: [{
           label: `${this.selectedResource.toUpperCase()} Usage (%)`,
           data: Object.values(usageData),
@@ -223,15 +220,6 @@ updateUsageAlert(): void {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true
-          },
-          tooltip: {
-            mode: 'index',
-            intersect: false
-          }
-        },
         scales: {
           y: {
             beginAtZero: true,
@@ -247,10 +235,7 @@ updateUsageAlert(): void {
   }
 
   updateChart(): void {
-    if (!this.chart) {
-      this.createChart();
-      return;
-    }
+    if (!this.chart) return;
 
     const usageData = this.getUsageData();
     this.chart.data.datasets[0].label = `${this.selectedResource.toUpperCase()} Usage (%)`;
@@ -262,5 +247,4 @@ updateUsageAlert(): void {
     if (!total) return 0;
     return Math.min((value / total) * 100, 100);
   }
-    
 }

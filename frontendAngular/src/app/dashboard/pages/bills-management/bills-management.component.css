@@ -1,147 +1,186 @@
 html, body {
-    height: 100%; /* Ensure body takes full height */
+    height: 100%;
     margin: 0;
-    background-color: #f9f9f9; /* Main background color */
+    background-color: #f9f9f9;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
 }
-
 
 .dashboard {
-    position: relative;
     display: flex;
+    flex-direction: column;
     height: 100%;
-    width: 100%; /* Full width */
-    /*position: fixed;  Sticks to all sides */
+    width: 100%;
     overflow: auto;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
+
+.container {
+    margin-left: 21rem;
+    padding: 2rem;
+}
+
 .content {
-    min-height: 100%; /* Ensure content takes full height of the screen */
     flex-grow: 1;
-    padding: 30px;
-    margin-left: 22%;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f9f9f9; /* Adjust main background */
+    background-color: #f9f9f9;
+    padding: 2rem;
 }
+
 .content h2 {
-    margin-bottom: 30px; /* Space between title and grid */
+    margin-bottom: 1.5rem;
 }
+
 .content hr {
-    margin-bottom: 25px; /* Space between hr and grid */
-    opacity: 15%;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-top: 1px solid #ccc;
+    opacity: 0.3;
 }
-.filtre{
+
+.filtre {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 20px; /* Adds spacing between items */
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
-select{
-    background-color: white;
-    padding: 10px;
-    border-radius: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+select {
+    background-color: #fff;
+    padding: 0.75rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 1rem;
 }
+
+/* Table Styles */
 .custom-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 1rem;
 }
 
 .custom-table td {
-    border-right: 1px solid #D0B8B8; /* Border between columns */
-    padding: 10px;
+    border-right: 1px solid #d0b8b8;
+    padding: 0.75rem;
+    font-size: 0.95rem;
 }
 
 .custom-table td:last-child {
-    border-right: none; /* Remove border for the last column */
+    border-right: none;
 }
 
 .header-column {
     background-color: #ddebda;
     font-weight: bold;
-    font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: black;
+    font-size: 1rem;
+    color: #000;
 }
+
 .row-style-2 td, .row-style-4 td {
     background-color: #e8eff2;
-    color: black;
+    color: #000;
 }
-.total{
+
+.total {
     font-weight: bold;
 }
-.totalValue{
+
+.totalValue {
     font-weight: bold;
     color: #E51837;
 }
+
+/* Statistic Boxes */
 .boxes {
-    margin-top: 50px;
+    margin-top: 3rem;
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 20px; /* Adds spacing between items */
-    font-family: Arial, Helvetica, sans-serif;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
 }
 
 .box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-.box span{
-    font-size: 14px;
+
+.box span {
+    font-size: 0.9rem;
 }
+
+/* Download Button */
 .telecharger {
-    margin: 30px;
+    margin: 2rem 0;
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically (if parent has a height) */
+    justify-content: center;
 }
 
 .download-btn {
     background-color: #E51837;
-    opacity: 70%;
-    color: white;
+    color: #fff;
     border: none;
-    border-radius: 40px;
-    padding: 10px 20px;
-    font-size: 16px;
+    border-radius: 2rem;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 233px;
-    gap: 8px; /* Space between icon and text */
+    gap: 0.5rem;
     cursor: pointer;
     font-weight: bold;
+    opacity: 0.85;
+    transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+    background-color: #c51530;
 }
 
 .download-btn i {
-    color: white; /* Ensures icon color is white */
+    color: white;
 }
+
 canvas {
     display: block;
-    width: 300px !important;
+    max-width: 100%;
+    height: auto;
     margin: auto;
 }
 
-
+/* Progress Bar */
 .progress-bar {
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
     width: 100%;
     height: 8px;
     background: #e0e0e0;
     border-radius: 4px;
     overflow: hidden;
-  }
-  
-  .progress {
+}
+
+.progress {
     height: 100%;
+    background-color: #E51837;
     transition: width 0.5s ease-in-out;
-  }
-  
-  .filters {
-    margin-top: 20px;
-  }
-  
+}
+
+.filters {
+    margin-top: 1.5rem;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+    .container {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .content {
+        margin: 0;
+        padding: 1rem;
+    }
+
+    .download-btn {
+        width: 100%;
+    }
+}

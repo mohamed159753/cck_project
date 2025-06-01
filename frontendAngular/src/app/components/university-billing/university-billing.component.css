@@ -40,6 +40,10 @@
     border-radius: 4px;
     color: #666;
   }
+
+  .table-header{
+    background-color: #D1E7DD;
+  }
   
   .table-container {
     overflow-x: auto;
