@@ -20,8 +20,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Use this
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**", "/api/professors/activate/**","/api/admin/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

@@ -2,6 +2,7 @@ package com.pfe.Reservation_Bill_Management.services.user;
 
 import java.time.YearMonth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pfe.Reservation_Bill_Management.dao.BillingEntryRepository;
@@ -13,8 +14,11 @@ import com.pfe.Reservation_Bill_Management.entities.BillingEntry;
 @Service
 public class BillingService {
 	
+	@Autowired
     CloudResourceRepository cloudResourceRepository;
+	@Autowired
     UniversityRepository universityRepository;
+	@Autowired
     BillingEntryRepository billingEntryRepository;
 	public void createBillingEntryFromDto(BillingEntryDTO dto) {
 	    BillingEntry entry = new BillingEntry();

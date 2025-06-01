@@ -33,8 +33,12 @@ public class CCKAdminController {
     }
     
     @GetMapping("/dashboard/university/{id}")
-    public ResponseEntity<Map<String, Object>> getUniversityDashboardStatistics(@PathVariable String id) {
-        return ResponseEntity.ok(cckAdminService.getUniversityDashboardStatistics(id));
+    public ResponseEntity<Map<String, Object>> getUniversityDashboardStatistics(
+            @PathVariable String id,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
+        
+        return ResponseEntity.ok(cckAdminService.getUniversityDashboardStatistics(id, month, year));
     }
 
     /**

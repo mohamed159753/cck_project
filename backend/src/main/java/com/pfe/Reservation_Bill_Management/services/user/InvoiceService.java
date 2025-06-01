@@ -2,6 +2,8 @@ package com.pfe.Reservation_Bill_Management.services.user;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +45,6 @@ public class InvoiceService {
 	    private BillingService billingService;
 	    
 	    @Transactional
-	    @Scheduled(cron = "0 0 0 1 * *") // At 00:00 on 1st of each month
 	    public void generateMonthlyInvoices() {
 	        String lastMonth = YearMonth.now().minusMonths(1).toString();
 
@@ -69,7 +70,9 @@ public class InvoiceService {
 	            invoice.setEntries(paygEntries);
 	            Subscription activeSub = university.getSubscriptions().get(0);
 	            BigDecimal monthlySubscription = BigDecimal.valueOf(activeSub.getPrice());
-
+	            invoice.setDueDate(LocalDate.now());
+	            invoice.setIssueDate(LocalDate.now());
+	            invoice.setStatus("unpaid");
 	            invoice.setFixedAmount(monthlySubscription);
 	            invoice.setPaygTotal(paygTotal);
 	            invoice.setTotalAmount(total);
@@ -79,7 +82,6 @@ public class InvoiceService {
 	    }
 	    
 	    @Transactional
-	    @Scheduled(cron = "0 0 23 30 * *") // Run on 30th at 23:00 before invoice job
 	    public void convertEcsUsageToBillingEntries() {
 	        YearMonth lastMonth = YearMonth.now().minusMonths(1);
 	        List<EcsUsage> ecsUsages = ecsUsageRepository.findAllByMonth(lastMonth.getMonthValue(),lastMonth.getYear());
@@ -97,6 +99,13 @@ public class InvoiceService {
 
 	            billingService.createBillingEntryFromDto(dto);
 	        }
+	    }
+	    
+	    @Transactional
+	   
+	    public void runBillingPipeline() {
+	        convertEcsUsageToBillingEntries();  // first
+	        generateMonthlyInvoices();          // then
 	    }
 	    
 	    
@@ -120,6 +129,10 @@ public class InvoiceService {
 	            .orElseThrow(() -> new IllegalArgumentException("University not found"));
 
 	        return invoiceRepository.findByUniversityAndMonth(university, month.toString());
+	    }
+	    
+	    public Invoice saveInvoice(Invoice invoice) {
+	    	return invoiceRepository.save(invoice);
 	    }
 	    
 	    public Invoice getInvoiceById(Long id) {

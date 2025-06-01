@@ -17,6 +17,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 	
 	
     List<Reservation> findByStatus(ApprovalStatus status);
+    List<Reservation> findByStatusIn(List<ApprovalStatus> statuses); // Add this method
+
     
 	@Query("SELECT COUNT(r) FROM Reservation r " +
 		       "WHERE r.university.id = :universityId " +
@@ -55,7 +57,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         @Param("startDate") LocalDateTime startDate, 
         @Param("endDate") LocalDateTime endDate);
     
-    @Query("SELECT r.resource.image, SUM(r.resource.storage) " +
+    @Query("SELECT r.resource.image, COUNT(r)" +
     	       "FROM Reservation r " +
     	       "WHERE r.professor.id = :professorId AND MONTH(r.startTime) = :month AND YEAR(r.startTime) = :year " +
     	       "GROUP BY r.resource.image")
@@ -125,6 +127,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     				
     				@Query("SELECT r.resource FROM Reservation r " +
     					       "WHERE r.status = 'APPROVED_CCK' " +
+    					       "AND r.reservationType = 'QUOTA' " +
     					       "AND r.professor.id = :professorId " +
     					       "AND r.startTime <= :now AND r.endTime >= :now")
     					List<CloudResource> findActiveResources(@Param("professorId") Long professorId, @Param("now") LocalDateTime now);
@@ -136,5 +139,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     				           "AND r.startTime <= :now AND r.endTime >= :now")
     				    List<CloudResource> findActivePaygResources(@Param("now") LocalDateTime now);
     				
-    List<Reservation> findByProfessorId(long professorId);
+    				@Query("SELECT r FROM Reservation r WHERE r.professor.id = :professorId")				
+    				List<Reservation> findByProfessorId(@Param("professorId") long professorId);
 }

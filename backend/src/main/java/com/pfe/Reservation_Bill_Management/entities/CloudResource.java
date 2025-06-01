@@ -1,5 +1,7 @@
 package com.pfe.Reservation_Bill_Management.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,8 +37,11 @@ public class CloudResource {
     
     private String externalId;
     
+    private String status;
+    
     @ManyToOne
     @JoinColumn(name = "reservation_id")
+    @JsonIgnore
     private Reservation reservation;
     
     
@@ -131,6 +136,16 @@ public class CloudResource {
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
 	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	
 	
 	
 	

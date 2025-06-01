@@ -10,6 +10,8 @@ import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -36,10 +38,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pfe.Reservation_Bill_Management.dao.EcsUsageRepository;
 import com.pfe.Reservation_Bill_Management.dao.ReservationRepository;
+import com.pfe.Reservation_Bill_Management.dao.ScheduleActionRepository;
 import com.pfe.Reservation_Bill_Management.dto.UnavailableTimeSlot;
+import com.pfe.Reservation_Bill_Management.entities.CckAdmin;
 import com.pfe.Reservation_Bill_Management.entities.CloudResource;
 import com.pfe.Reservation_Bill_Management.entities.EcsUsage;
 import com.pfe.Reservation_Bill_Management.entities.Professor;
@@ -47,9 +52,15 @@ import com.pfe.Reservation_Bill_Management.entities.Quota;
 import com.pfe.Reservation_Bill_Management.entities.Reservation;
 import com.pfe.Reservation_Bill_Management.entities.Reservation.ApprovalStatus;
 import com.pfe.Reservation_Bill_Management.entities.Reservation.ReservationType;
+import com.pfe.Reservation_Bill_Management.entities.ScheduledAction;
+import com.pfe.Reservation_Bill_Management.entities.ScheduledAction.ActionStatus;
+import com.pfe.Reservation_Bill_Management.entities.ScheduledAction.ActionType;
 import com.pfe.Reservation_Bill_Management.entities.University;
+import com.pfe.Reservation_Bill_Management.entities.UniversityAdmin;
 import com.pfe.Reservation_Bill_Management.security.JwtUtil;
 import com.pfe.Reservation_Bill_Management.services.user.CloudResourceService;
+import com.pfe.Reservation_Bill_Management.services.user.LoginServiceCCK;
+import com.pfe.Reservation_Bill_Management.services.user.LoginServiceUniversities;
 import com.pfe.Reservation_Bill_Management.services.user.ProfessorService;
 import com.pfe.Reservation_Bill_Management.services.user.ReservationService;
 import com.pfe.Reservation_Bill_Management.services.user.UniversityService;
@@ -71,6 +82,9 @@ public class ReservationController {
     private CloudResourceService cldResourceService;
     @Autowired ReservationRepository reservationRepository;
     @Autowired EcsUsageRepository ecsUsageRepository;
+    @Autowired LoginServiceUniversities universityService;
+    @Autowired LoginServiceCCK cckService;
+    @Autowired ScheduleActionRepository scheduleActionRepository;
     
     @GetMapping("/university/{universityId}")
     public ResponseEntity<Object> getReservationsByUniversity(
@@ -150,7 +164,6 @@ public class ReservationController {
 
     		
     	
-    	
     	CloudResource cldResource = new CloudResource();
     	cldResource.setType("ECS");
     	cldResource.setVcpu(Integer.parseInt(vcpu));
@@ -182,6 +195,28 @@ public class ReservationController {
     	    reservation.setUniversity(uniOpt.get());
 
     	    Reservation saved = reservationService.addReservation(reservation);
+    	    
+    	    //schedule creation and deletion if is not now 
+    	    LocalDateTime now = LocalDateTime.now();
+    	    boolean alreadyCreated = Boolean.parseBoolean(details.getOrDefault("startImmediately", "false"));
+
+    	    if (startTime.isAfter(now) && !alreadyCreated) {
+    	        // Schedule VM creation
+    	        ScheduledAction createAction = new ScheduledAction();
+    	        createAction.setReservationId(saved.getId());
+    	        createAction.setScheduledTime(startTime);
+    	        createAction.setActionType(ScheduledAction.ActionType.CREATE);
+    	        createAction.setStatus(ScheduledAction.ActionStatus.PENDING);
+    	        scheduleActionRepository.save(createAction);
+    	    }
+    	    
+    	    ScheduledAction deleteAction = new ScheduledAction();
+    	    deleteAction.setReservationId(reservation.getId());
+    	    deleteAction.setScheduledTime(endTime);
+    	    deleteAction.setActionType(ScheduledAction.ActionType.DELETE);
+    	    deleteAction.setStatus(ScheduledAction.ActionStatus.PENDING);
+    	    scheduleActionRepository.save(deleteAction);
+    	    
     	    return ResponseEntity.ok(saved);
     	    
     	}
@@ -277,6 +312,12 @@ public class ReservationController {
     	    reservation.setUniversity(uniOpt.get());
 
     	    Reservation saved = reservationService.addReservation(reservation);
+    	    ScheduledAction deleteAction = new ScheduledAction();
+    	    deleteAction.setReservationId(reservation.getId());
+    	    deleteAction.setScheduledTime(endTime);
+    	    deleteAction.setActionType(ScheduledAction.ActionType.DELETE);
+    	    deleteAction.setStatus(ScheduledAction.ActionStatus.PENDING);
+    	    scheduleActionRepository.save(deleteAction);
     	    return ResponseEntity.ok(saved);
     	    
     
@@ -445,18 +486,25 @@ public class ReservationController {
             response.put("message", "Invalid status value");
             return ResponseEntity.badRequest().body(response);
         }
+        
+        Long adminId = body.get("adminId") != null ? Long.parseLong(body.get("adminId")) : null;
+        
+
 
         try {
             switch (newStatus) {
                 case APPROVED_UNIVERSITY:
-                    reservationService.approveByUniversity(reservationId);
+                	Optional<UniversityAdmin> admin = universityService.getAdminById(adminId);
+                    reservationService.approveByUniversity(reservationId,admin.get());
                     break;
                 case REJECTED_UNIVERSITY:
                     // You might want to pass a rejection reason from the request
-                    reservationService.rejectByUniversity(reservationId, "No reason provided");
+                	Optional<UniversityAdmin> admin2 = universityService.getAdminById(adminId);
+                    reservationService.rejectByUniversity(reservationId, "No reason provided",admin2.get());
                     break;
                 case APPROVED_CCK:
-                    reservationService.approveByCCK(reservationId);
+                	Optional<CckAdmin> admin3 = cckService.getAdminById(adminId);
+                    reservationService.approveByCCK(reservationId,admin3.get());
                     Optional<Reservation> reservation = reservationRepository.findById(reservationId);
                     
                     CloudResource cldResource = reservation.get().getResource();
@@ -471,6 +519,18 @@ public class ReservationController {
 
                     // Optional: include user details if needed in the Flask route
                     // payload.put("email", reservation.getUser().getEmail());
+            	    LocalDateTime now = LocalDateTime.now();
+                    if (reservation.get().getStartTime().isAfter(now)) {
+            	        // Schedule VM creation
+            	        ScheduledAction createAction = new ScheduledAction();
+            	        createAction.setReservationId(reservation.get().getId());
+            	        createAction.setScheduledTime(reservation.get().getStartTime());
+            	        createAction.setActionType(ScheduledAction.ActionType.CREATE);
+            	        createAction.setStatus(ScheduledAction.ActionStatus.PENDING);
+            	        scheduleActionRepository.save(createAction);
+            	    }
+                    
+                    else {
 
                     try {
                         HttpClient client = HttpClient.newHttpClient();
@@ -486,6 +546,12 @@ public class ReservationController {
                         HttpResponse<String> responseVM = client.send(request, HttpResponse.BodyHandlers.ofString());
 
                         System.out.println("VM creation response: " + responseVM.body());
+                        if (responseVM.statusCode() == 200) {
+                            // Parse the JSON response to extract VM ID
+                            JsonNode responseJson = objectMapper.readTree(responseVM.body());
+                            String vmId = responseJson.get("vm_id").asText();
+                            cldResource.setExternalId(vmId);
+                        }
                         
                         EcsUsage usage = new EcsUsage();
                         usage.setCloudResource(cldResource); // assuming a @ManyToOne link
@@ -495,10 +561,12 @@ public class ReservationController {
                     } catch (Exception e) {
                         System.err.println("Failed to trigger VM creation: " + e.getMessage());
                     }
+                   }
                     
                     break;
                 case REJECTED_CCK:
-                    reservationService.rejectByCCK(reservationId, "No reason provided");
+                	Optional<CckAdmin> admin4 = cckService.getAdminById(adminId);
+                    reservationService.rejectByCCK(reservationId, "No reason provided",admin4.get());
                     break;
                 default:
                     response.put("message", "Status update not supported for: " + newStatus);

@@ -2,6 +2,8 @@ package com.pfe.Reservation_Bill_Management.entities;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,6 +33,7 @@ public class Reservation {
     
     @ManyToOne
     @JoinColumn(name = "resource_id")
+    
     private CloudResource resource;
     
     @Column(name = "start_time", nullable = false)
@@ -43,6 +46,22 @@ public class Reservation {
     private ApprovalStatus status;
     @Enumerated(EnumType.STRING)
     private ReservationType reservationType;
+    
+    @ManyToOne
+    @JoinColumn(name = "approved_by_id")
+    private UniversityAdmin approvedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "rejected_by_id")
+    private UniversityAdmin rejectedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "cck_approved_by_id")
+    private CckAdmin cckApprovedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "cck_rejected_by_id")
+    private CckAdmin cckRejectedBy;
     
    
     
@@ -58,6 +77,9 @@ public class Reservation {
         QUOTA,
         PAYG
     }
+    
+    private boolean isCreated = false;
+    private boolean isDeleted = false;
     
     
 
@@ -125,4 +147,57 @@ public class Reservation {
     public void setStatus(ApprovalStatus status) {
         this.status = status;
     }
+
+	public UniversityAdmin getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(UniversityAdmin approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public UniversityAdmin getRejectedBy() {
+		return rejectedBy;
+	}
+
+	public void setRejectedBy(UniversityAdmin rejectedBy) {
+		this.rejectedBy = rejectedBy;
+	}
+
+	public CckAdmin getCckApprovedBy() {
+		return cckApprovedBy;
+	}
+
+	public void setCckApprovedBy(CckAdmin cckApprovedBy) {
+		this.cckApprovedBy = cckApprovedBy;
+	}
+
+	public CckAdmin getCckRejectedBy() {
+		return cckRejectedBy;
+	}
+
+	public void setCckRejectedBy(CckAdmin cckRejectedBy) {
+		this.cckRejectedBy = cckRejectedBy;
+	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
+	
+    
+    
+    
 }

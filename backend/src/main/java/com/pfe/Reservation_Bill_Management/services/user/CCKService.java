@@ -44,9 +44,12 @@ public class CCKService {
      */
     
     public List<Reservation> getReservations(){
-		List<Reservation> reservations = reservationRepository.findByStatus(ApprovalStatus.PENDING_CCK);
-		return reservations;
-    	
+        List<ApprovalStatus> statuses = Arrays.asList(
+            ApprovalStatus.PENDING_CCK,
+            ApprovalStatus.APPROVED_CCK
+        );
+        List<Reservation> reservations = reservationRepository.findByStatusIn(statuses);
+        return reservations;
     }
     public Map<String, Object> getDashboardStatistics() {
         Map<String, Object> stats = new HashMap<>();
@@ -526,7 +529,7 @@ public class CCKService {
      * @param universityId The ID of the university to get statistics for
      * @return Map of statistics for the specified university
      */
-    public Map<String, Object> getUniversityDashboardStatistics(String universityId) {
+    public Map<String, Object> getUniversityDashboardStatistics(String universityId, Integer month, Integer year) {
         Map<String, Object> stats = new HashMap<>();
 
         // Find the university
@@ -540,6 +543,14 @@ public class CCKService {
 
         // Get all reservations for this university
         List<Reservation> universityReservations = reservationRepository.findByUniversityId(universityId);
+        
+        if (month != null && year != null) {
+            universityReservations = universityReservations.stream()
+                .filter(r -> r.getStartTime() != null &&
+                             r.getStartTime().getMonthValue() == month &&
+                             r.getStartTime().getYear() == year)
+                .collect(Collectors.toList());
+        }
 
         int totalReservations = universityReservations.size();
 

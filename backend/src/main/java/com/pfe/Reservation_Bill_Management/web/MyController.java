@@ -15,9 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pfe.Reservation_Bill_Management.dao.UniversityRepository;
+import com.pfe.Reservation_Bill_Management.dto.AdminLoginRequest;
+import com.pfe.Reservation_Bill_Management.entities.CckAdmin;
 import com.pfe.Reservation_Bill_Management.entities.Professor;
+import com.pfe.Reservation_Bill_Management.entities.University;
+import com.pfe.Reservation_Bill_Management.entities.UniversityAdmin;
 import com.pfe.Reservation_Bill_Management.entities.User;
 import com.pfe.Reservation_Bill_Management.security.JwtUtil;
+import com.pfe.Reservation_Bill_Management.services.user.LoginServiceCCK;
 import com.pfe.Reservation_Bill_Management.services.user.LoginServiceUniversities;
 import com.pfe.Reservation_Bill_Management.services.user.ProfessorService;
 import com.pfe.Reservation_Bill_Management.services.user.RegisterService;
@@ -35,6 +41,15 @@ public class MyController {
 	
 	@Autowired
 	private JwtUtil jwtUtil;
+	
+	 @Autowired
+	 private LoginServiceUniversities universityAdminService;
+	 
+	 @Autowired
+	 private LoginServiceCCK cckAdminService;
+	 
+	 @Autowired
+	 private UniversityRepository universityRepository;
 	
 	@Autowired
 	public MyController(com.pfe.Reservation_Bill_Management.services.user.LoginService userService, RegisterService userServiceRegister, LoginServiceUniversities loginServiceUni,ProfessorService professorService ) {
@@ -104,6 +119,25 @@ public class MyController {
         response.put("message", "User already exists");
         return ResponseEntity.ok(response);
     }
+    
+    @PostMapping("/uni-login")
+    public UniversityAdmin uniLogin(@RequestBody AdminLoginRequest request) {
+        University uni = universityRepository.findById(request.getUniversityId())
+            .orElseThrow(() -> new RuntimeException("University not found"));
+
+        return universityAdminService.getOrCreateUniversityAdmin(request.getEmail(), uni);
+    }
+    
+    @PostMapping("/cck-login")
+    public CckAdmin uniLogin(@RequestBody String email) {
+       
+
+        return cckAdminService.getOrCreateUniversityAdmin(email);
+    }
+    /* @PostMapping("/cck-login")
+    public CckAdmin Ccklogin(@RequestBody AdminLoginRequest request) {
+        return cckAdminService.getOrCreateUniversityAdmin(request.getEmail(), ); 
+    }*/
     
     @GetMapping("/activate/{token}")
     public ResponseEntity<String> activateAccount(@PathVariable String token) {

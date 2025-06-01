@@ -70,7 +70,7 @@ public class ProfessorService {
 	            emailChangeService.storeNewEmail(professorId, updatedData.getEmail());
 
 	            // Send confirmation email to new email address
-	            String link = "https://1kjfg4hs-8080.uks1.devtunnels.ms/api/professors/activate/" + token;
+	            String link = "http://localhost:8080/api/professors/activate/" + token;
 	            registerService.sendActivationEmail(updatedData.getEmail(), link);
 
 	            // Do NOT update professor.setEmail yet

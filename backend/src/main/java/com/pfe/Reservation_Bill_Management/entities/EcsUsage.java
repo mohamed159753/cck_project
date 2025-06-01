@@ -13,7 +13,7 @@ public class EcsUsage {
 
   
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "prof_id", nullable = false)
     private Professor prof;
     
@@ -32,7 +32,7 @@ public class EcsUsage {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cloud_resource_id", nullable = false)
     private CloudResource cloudResource;
     

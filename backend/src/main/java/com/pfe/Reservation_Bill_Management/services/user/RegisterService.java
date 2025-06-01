@@ -58,7 +58,7 @@ public class RegisterService {
 	        userdao.save(prof);
 
 	        // Send activation email
-	        String activationLink = "https://1kjfg4hs-8080.uks1.devtunnels.ms/api/activate/" + token;
+	        String activationLink = "http://localhost:8080/api/activate/" + token;
 	        sendActivationEmail(email, activationLink);  // create this
 
 	        return true;

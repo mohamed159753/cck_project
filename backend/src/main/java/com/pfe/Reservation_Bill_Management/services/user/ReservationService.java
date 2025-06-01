@@ -17,12 +17,14 @@ import org.springframework.stereotype.Service;
 import com.pfe.Reservation_Bill_Management.dao.ProfessorRepository;
 import com.pfe.Reservation_Bill_Management.dao.ReservationRepository;
 import com.pfe.Reservation_Bill_Management.dto.UnavailableTimeSlot;
+import com.pfe.Reservation_Bill_Management.entities.CckAdmin;
 import com.pfe.Reservation_Bill_Management.entities.CloudResource;
 import com.pfe.Reservation_Bill_Management.entities.Professor;
 import com.pfe.Reservation_Bill_Management.entities.Quota;
 import com.pfe.Reservation_Bill_Management.entities.Reservation;
 import com.pfe.Reservation_Bill_Management.entities.Reservation.ApprovalStatus;
 import com.pfe.Reservation_Bill_Management.entities.University;
+import com.pfe.Reservation_Bill_Management.entities.UniversityAdmin;
 
 @Service
 public class ReservationService {
@@ -184,16 +186,17 @@ public class ReservationService {
     	reservationRepository.save(reservation);
     } */
     
-    public void approveByUniversity(Long reservationId) {
+    public void approveByUniversity(Long reservationId, UniversityAdmin admin) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         reservation.setStatus(ApprovalStatus.APPROVED_UNIVERSITY);
         
 
         reservation.setStatus(ApprovalStatus.PENDING_CCK);
+        reservation.setApprovedBy(admin);
         reservationRepository.save(reservation);
     }
     
-    public void rejectByUniversity(Long reservationId, String reason) {
+    public void rejectByUniversity(Long reservationId, String reason, UniversityAdmin admin) {
         Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
@@ -202,10 +205,11 @@ public class ReservationService {
         }
 
         reservation.setStatus(ApprovalStatus.REJECTED_UNIVERSITY);
+        reservation.setRejectedBy(admin);
         reservationRepository.save(reservation);
     }
     
-    public void approveByCCK(Long reservationId) {
+    public void approveByCCK(Long reservationId, CckAdmin admin) {
         Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
@@ -214,10 +218,11 @@ public class ReservationService {
         }
 
         reservation.setStatus(ApprovalStatus.APPROVED_CCK);
+        reservation.setCckApprovedBy(admin);
         reservationRepository.save(reservation);
     }
     
-    public void rejectByCCK(Long reservationId, String reason) {
+    public void rejectByCCK(Long reservationId, String reason, CckAdmin admin) {
         Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
@@ -226,6 +231,7 @@ public class ReservationService {
         }
 
         reservation.setStatus(ApprovalStatus.REJECTED_CCK);
+        reservation.setCckRejectedBy(admin);
         reservationRepository.save(reservation);
     }
     

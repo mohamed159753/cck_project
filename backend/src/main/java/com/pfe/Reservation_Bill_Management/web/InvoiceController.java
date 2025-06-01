@@ -12,7 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +31,7 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
+import com.pfe.Reservation_Bill_Management.dao.InvoiceRepository;
 import com.pfe.Reservation_Bill_Management.entities.Invoice;
 import com.pfe.Reservation_Bill_Management.services.user.InvoiceService;
 import com.pfe.Reservation_Bill_Management.services.user.PaymentService;
@@ -52,6 +54,13 @@ public class InvoiceController {
 	    @GetMapping("/{invoiceId}")
 	    public Optional<Invoice> getInvoiceById(@PathVariable("invoiceId") Long invoiceId) {
 	        return Optional.of(invoiceService.getInvoiceById(invoiceId));
+	    }
+	    
+	    @PutMapping("/{invoiceId}")
+	    public Optional<Invoice> updateInvoiceById(@PathVariable("invoiceId") Long invoiceId, @RequestBody String status) {
+	        Invoice invoice = invoiceService.getInvoiceById(invoiceId);
+	        invoice.setStatus(status);
+	        return Optional.of((invoiceService.saveInvoice(invoice)));
 	    }
 	    
 	    @GetMapping("/university/{universityId}")
@@ -186,11 +195,7 @@ public class InvoiceController {
 
 	            document.add(table);
 
-	            // Optional: Add some footer or note
-	            document.add(new Paragraph("\nOk Maysem 22525521")
-	                .setTextAlignment(TextAlignment.CENTER)
-	                .setFontSize(10)
-	                .setItalic());
+	            
 
 	            document.close();
 
